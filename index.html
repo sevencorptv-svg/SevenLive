@@ -77,7 +77,6 @@
 </div>
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
-  const API = 'https://api.npoint.io/' + BIN_ID;
   const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
   const grid = document.getElementById('calGrid');
   const cells = [];
@@ -94,7 +93,10 @@
 
   async function load() {
     try {
-      const res = await fetch(API);
+      // Timestamp anti-cache : force une vraie requête à chaque fois
+      const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), {
+        cache: 'no-store'
+      });
       const data = await res.json();
       days.forEach((_, i) => {
         const d = data['day-' + i] || {};
