@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Overlay</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: Arial Black, sans-serif; }
+  .overlay-wrapper { width: 780px; padding: 16px; background: #000; border-radius: 18px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 40px rgba(0,0,0,0.9); }
+  .overlay-title { text-align: center; font-family: Arial Black; font-size: 20px; letter-spacing: 4px; color: rgba(255,255,255,0.5); margin-bottom: 14px; text-transform: uppercase; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .day-col { display: flex; flex-direction: column; gap: 6px; }
+  .day-header { text-align: center; font-family: Arial Black; font-size: 16px; letter-spacing: 2px; color: rgba(255,255,255,0.85); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .day-cell { min-height: 80px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; padding: 8px; transition: all 0.4s; }
+  .day-cell.green { background: rgba(34,197,94,0.3); border-color: rgba(34,197,94,0.7); box-shadow: 0 0 14px rgba(34,197,94,0.25); }
+  .day-cell.red { background: rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.7); box-shadow: 0 0 14px rgba(239,68,68,0.25); }
+  .cell-text { font-family: Arial; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.95); text-align: center; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<div class="overlay-wrapper">
+  <div class="overlay-title">Planning de la semaine</div>
+  <div class="calendar-grid" id="calGrid"></div>
+</div>
+<script>
+  const BIN_ID = 'd9b3e782f440cad27817';
+  const API = 'https://api.npoint.io/' + BIN_ID;
+  const days = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  const grid = document.getElementById('calGrid');
+  const cells = [];
+
+  days.forEach((day, i) => {
+    const col = document.createElement('div'); col.className = 'day-col';
+    const h = document.createElement('div'); h.className = 'day-header'; h.textContent = day;
+    col.appendChild(h);
+    const cell = document.createElement('div'); cell.className = 'day-cell';
+    const text = document.createElement('div'); text.className = 'cell-text';
+    cell.appendChild(text); col.appendChild(cell); grid.appendChild(col);
+    cells.push({ cell, text });
+  });
+
+  async function load() {
+    try {
+      const res = await fetch(API);
+      const data = await res.json();
+      days.forEach((_, i) => {
+        const d = data['day-' + i] || {};
+        cells[i].cell.className = 'day-cell' + (d.color ? ' ' + d.color : '');
+        cells[i].text.textContent = d.text || '';
+      });
+    } catch(e) {}
+  }
+
+  load();
+  setInterval(load, 2000);
+</script>
+</body>
+</html>
