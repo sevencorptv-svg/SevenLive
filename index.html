@@ -2,35 +2,32 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Overlay Calendrier</title>
-
+<title>Overlay</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: transparent;
+    background: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    font-family: Arial, sans-serif;
+    font-family: Arial Black, sans-serif;
   }
 
   .overlay-wrapper {
-    width: 760px;
+    width: 780px;
     padding: 16px;
-    background: rgba(10, 10, 15, 0.82);
+    background: #000000;
     border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.9);
   }
 
   .overlay-title {
     text-align: center;
     font-family: Arial Black, sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     letter-spacing: 4px;
     color: rgba(255,255,255,0.5);
     margin-bottom: 14px;
@@ -52,11 +49,11 @@
   .day-header {
     text-align: center;
     font-family: Arial Black, sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     letter-spacing: 2px;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.85);
     padding: 6px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
   }
 
   .day-cell {
@@ -64,189 +61,83 @@
     border-radius: 10px;
     background: rgba(255,255,255,0.05);
     border: 1.5px solid rgba(255,255,255,0.1);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
-  }
-
-  .day-cell:hover {
-    border-color: rgba(255,255,255,0.3);
-    transform: translateY(-1px);
+    padding: 8px;
+    transition: all 0.4s ease;
   }
 
   .day-cell.green {
-    background: rgba(34, 197, 94, 0.25);
-    border-color: rgba(34, 197, 94, 0.6);
-    box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.3);
+    border-color: rgba(34, 197, 94, 0.7);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.25);
   }
 
   .day-cell.red {
-    background: rgba(239, 68, 68, 0.25);
-    border-color: rgba(239, 68, 68, 0.6);
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
   }
 
   .cell-text {
-    width: 100%;
-    height: 100%;
-    min-height: 66px;
-    background: transparent;
-    border: none;
-    outline: none;
-    resize: none;
     font-family: Arial, sans-serif;
     font-size: 12px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
     text-align: center;
-    cursor: pointer;
     line-height: 1.4;
-    padding: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
-
-  .cell-text::placeholder {
-    color: rgba(255,255,255,0.2);
-    font-weight: 400;
-  }
-
-  /* Color toggle dots */
-  .toggle-dots {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    display: flex;
-    gap: 3px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .day-cell:hover .toggle-dots {
-    opacity: 1;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.15s;
-  }
-  .dot:hover { transform: scale(1.3); }
-  .dot.dot-green { background: #22c55e; }
-  .dot.dot-red { background: #ef4444; }
-  .dot.dot-clear { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.4); }
-
-  /* Edit mode hint */
-  .hint {
-    text-align: center;
-    font-size: 10px;
-    color: rgba(255,255,255,0.2);
-    margin-top: 10px;
-    letter-spacing: 1px;
-  }
-
 </style>
 </head>
 <body>
 
 <div class="overlay-wrapper">
   <div class="overlay-title">Planning de la semaine</div>
-
   <div class="calendar-grid" id="calGrid"></div>
-
-  <div class="hint">● VERT &nbsp;|&nbsp; ● ROUGE &nbsp;|&nbsp; ○ EFFACER &nbsp;— Clique sur les points pour changer la couleur · Écris directement dans les cases</div>
 </div>
 
 <script>
   const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
   const grid = document.getElementById('calGrid');
-
-  // Load saved state
-  const saved = JSON.parse(localStorage.getItem('overlay-calendar') || '{}');
+  const cells = [];
 
   days.forEach((day, i) => {
     const col = document.createElement('div');
     col.className = 'day-col';
 
-    // Header
     const header = document.createElement('div');
     header.className = 'day-header';
     header.textContent = day;
     col.appendChild(header);
 
-    // Cell
     const cell = document.createElement('div');
     cell.className = 'day-cell';
-    const key = `day-${i}`;
 
-    // Restore color
-    if (saved[key]?.color) {
-      cell.classList.add(saved[key].color);
-    }
+    const text = document.createElement('div');
+    text.className = 'cell-text';
 
-    // Textarea
-    const textarea = document.createElement('textarea');
-    textarea.className = 'cell-text';
-    textarea.placeholder = '...';
-    textarea.value = saved[key]?.text || '';
-    textarea.addEventListener('input', () => saveState());
-    // Prevent textarea click from triggering color toggle
-    textarea.addEventListener('click', e => e.stopPropagation());
-
-    // Toggle dots
-    const dots = document.createElement('div');
-    dots.className = 'toggle-dots';
-
-    const dotGreen = document.createElement('div');
-    dotGreen.className = 'dot dot-green';
-    dotGreen.title = 'Vert';
-    dotGreen.addEventListener('click', e => {
-      e.stopPropagation();
-      cell.classList.remove('red', 'green');
-      cell.classList.add('green');
-      saveState();
-    });
-
-    const dotRed = document.createElement('div');
-    dotRed.className = 'dot dot-red';
-    dotRed.title = 'Rouge';
-    dotRed.addEventListener('click', e => {
-      e.stopPropagation();
-      cell.classList.remove('red', 'green');
-      cell.classList.add('red');
-      saveState();
-    });
-
-    const dotClear = document.createElement('div');
-    dotClear.className = 'dot dot-clear';
-    dotClear.title = 'Effacer couleur';
-    dotClear.addEventListener('click', e => {
-      e.stopPropagation();
-      cell.classList.remove('red', 'green');
-      saveState();
-    });
-
-    dots.appendChild(dotGreen);
-    dots.appendChild(dotRed);
-    dots.appendChild(dotClear);
-
-    cell.appendChild(textarea);
-    cell.appendChild(dots);
+    cell.appendChild(text);
     col.appendChild(cell);
     grid.appendChild(col);
-
-    function saveState() {
-      const color = cell.classList.contains('green') ? 'green'
-                  : cell.classList.contains('red') ? 'red' : '';
-      const all = JSON.parse(localStorage.getItem('overlay-calendar') || '{}');
-      all[key] = { color, text: textarea.value };
-      localStorage.setItem('overlay-calendar', JSON.stringify(all));
-    }
+    cells.push({ cell, text });
   });
+
+  function loadData() {
+    const saved = JSON.parse(localStorage.getItem('seven-overlay') || '{}');
+    days.forEach((_, i) => {
+      const key = `day-${i}`;
+      const data = saved[key] || {};
+      const { cell, text } = cells[i];
+      cell.className = 'day-cell' + (data.color ? ' ' + data.color : '');
+      text.textContent = data.text || '';
+    });
+  }
+
+  loadData();
+  setInterval(loadData, 2000);
 </script>
 
 </body>
