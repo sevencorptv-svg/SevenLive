@@ -14,6 +14,7 @@
   .day-cell { border-radius: 10px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 8px; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s; }
   .day-cell.green { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.6); }
   .day-cell.red { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.6); }
+  .day-cell.gray { background: rgba(160,160,160,0.2); border-color: rgba(160,160,160,0.6); }
   .cell-textarea { width: 100%; min-height: 70px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: Arial; font-size: 12px; font-weight: 600; padding: 6px; resize: none; outline: none; text-align: center; }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
   .color-btns { display: flex; gap: 5px; justify-content: center; }
@@ -21,6 +22,7 @@
   .btn-color:hover { transform: scale(1.05); }
   .btn-green { background: #22c55e; color: #000; }
   .btn-red { background: #ef4444; color: #fff; }
+  .btn-gray { background: #a0a0a0; color: #000; }
   .btn-clear { background: rgba(255,255,255,0.15); color: #fff; }
   .saved-indicator { margin-top: 16px; font-size: 13px; color: #22c55e; letter-spacing: 1px; height: 20px; opacity: 0; transition: opacity 0.5s; }
   .saved-indicator.show { opacity: 1; }
@@ -68,7 +70,7 @@
       textarea.placeholder = '...'; textarea.value = state[key].text || '';
       textarea.addEventListener('input', () => { state[key].text = textarea.value; scheduleSave(); });
       const colorBtns = document.createElement('div'); colorBtns.className = 'color-btns';
-      [['green','🟢','btn-green'],['red','🔴','btn-red'],['','✕','btn-clear']].forEach(([color, label, cls]) => {
+      [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⚪','btn-gray'],['','✕','btn-clear']].forEach(([color, label, cls]) => {
         const btn = document.createElement('button'); btn.className = 'btn-color ' + cls; btn.textContent = label;
         btn.addEventListener('click', () => { state[key].color = color; cell.className = 'day-cell' + (color ? ' ' + color : ''); scheduleSave(); });
         colorBtns.appendChild(btn);
