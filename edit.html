@@ -5,33 +5,116 @@
 <title>Éditeur Overlay</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: Arial, sans-serif; padding: 30px 20px; }
+  body {
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    padding: 30px 20px;
+  }
   h1 { font-family: Arial Black; font-size: 20px; letter-spacing: 3px; color: #fff; margin-bottom: 6px; text-transform: uppercase; }
   .subtitle { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 24px; letter-spacing: 1px; }
-  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%; max-width: 840px; }
-  .day-col { display: flex; flex-direction: column; gap: 8px; }
-  .day-header { text-align: center; font-family: Arial Black; font-size: 14px; letter-spacing: 1px; color: rgba(255,255,255,0.8); padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.15); }
-  .day-cell { border-radius: 10px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 8px; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s; }
+
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .day-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .day-header {
+    font-family: Arial Black;
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: #fff;
+    text-transform: uppercase;
+    width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .day-cell {
+    flex: 1;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+  }
   .day-cell.green { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.6); }
   .day-cell.red { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.6); }
-  .day-cell.gray { background: rgba(160,160,160,0.2); border-color: rgba(160,160,160,0.6); }
-  .cell-textarea { width: 100%; min-height: 70px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: Arial; font-size: 12px; font-weight: 600; padding: 6px; resize: none; outline: none; text-align: center; }
+
+  .cell-textarea {
+    flex: 1;
+    min-height: 50px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: #fff;
+    font-family: Impact, Arial Black;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px;
+    resize: none;
+    outline: none;
+    text-align: center;
+  }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
-  .color-btns { display: flex; gap: 5px; justify-content: center; }
-  .btn-color { flex: 1; padding: 5px 0; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; transition: transform 0.15s; }
-  .btn-color:hover { transform: scale(1.05); }
-  .btn-green { background: #22c55e; color: #000; }
-  .btn-red { background: #ef4444; color: #fff; }
-  .btn-gray { background: #a0a0a0; color: #000; }
-  .btn-clear { background: rgba(255,255,255,0.15); color: #fff; }
-  .saved-indicator { margin-top: 16px; font-size: 13px; color: #22c55e; letter-spacing: 1px; height: 20px; opacity: 0; transition: opacity 0.5s; }
+
+  .color-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .btn-color {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn-color:hover { transform: scale(1.1); }
+  .btn-green { background: #22c55e; }
+  .btn-red { background: #ef4444; }
+  .btn-clear { background: rgba(255,255,255,0.15); color: #fff; font-size: 12px; font-weight: 700; }
+
+  .saved-indicator {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #22c55e;
+    letter-spacing: 1px;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
   .saved-indicator.show { opacity: 1; }
   .loading { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 <h1>🎛 Éditeur Overlay</h1>
-<div class="subtitle">Les modifications s'appliquent en temps réel sur ton live</div>
+<div class="subtitle">Modifications en temps réel sur ton live</div>
 <div class="loading" id="loadingMsg">Chargement...</div>
 <div class="calendar-grid" id="calGrid" style="display:none"></div>
 <div class="saved-indicator" id="savedMsg">✅ Sauvegardé !</div>
@@ -39,7 +122,7 @@
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
   const API = 'https://api.npoint.io/' + BIN_ID;
-  const days = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
   const grid = document.getElementById('calGrid');
   const savedMsg = document.getElementById('savedMsg');
   const loadingMsg = document.getElementById('loadingMsg');
@@ -47,39 +130,74 @@
   let saveTimeout = null;
 
   async function saveData() {
-    await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state) });
-    savedMsg.classList.add('show');
-    clearTimeout(savedMsg._t);
-    savedMsg._t = setTimeout(() => savedMsg.classList.remove('show'), 1500);
+    try {
+      await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state)
+      });
+      savedMsg.classList.add('show');
+      clearTimeout(savedMsg._t);
+      savedMsg._t = setTimeout(() => savedMsg.classList.remove('show'), 1500);
+    } catch(e) {}
   }
 
-  function scheduleSave() { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 800); }
+  function scheduleSave() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveData, 600);
+  }
 
   function buildUI() {
-    grid.style.display = 'grid';
+    grid.style.display = 'flex';
     loadingMsg.style.display = 'none';
+
     days.forEach((day, i) => {
       const key = 'day-' + i;
       if (!state[key]) state[key] = { color: '', text: '' };
-      const col = document.createElement('div'); col.className = 'day-col';
-      const header = document.createElement('div'); header.className = 'day-header'; header.textContent = day;
-      col.appendChild(header);
+
+      const row = document.createElement('div'); row.className = 'day-row';
+
+      const header = document.createElement('div'); header.className = 'day-header';
+      header.textContent = day;
+      row.appendChild(header);
+
       const cell = document.createElement('div');
       cell.className = 'day-cell' + (state[key].color ? ' ' + state[key].color : '');
-      const textarea = document.createElement('textarea'); textarea.className = 'cell-textarea';
-      textarea.placeholder = '...'; textarea.value = state[key].text || '';
-      textarea.addEventListener('input', () => { state[key].text = textarea.value; scheduleSave(); });
+
+      const textarea = document.createElement('textarea');
+      textarea.className = 'cell-textarea';
+      textarea.placeholder = '...';
+      textarea.value = state[key].text || '';
+      textarea.addEventListener('input', () => {
+        state[key].text = textarea.value;
+        scheduleSave();
+      });
+
       const colorBtns = document.createElement('div'); colorBtns.className = 'color-btns';
-      [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⚪','btn-gray'],['','✕','btn-clear']].forEach(([color, label, cls]) => {
-        const btn = document.createElement('button'); btn.className = 'btn-color ' + cls; btn.textContent = label;
-        btn.addEventListener('click', () => { state[key].color = color; cell.className = 'day-cell' + (color ? ' ' + color : ''); scheduleSave(); });
+
+      [['green','🟢','btn-green'], ['red','🔴','btn-red'], ['','✕','btn-clear']].forEach(([color, label, cls]) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-color ' + cls;
+        btn.textContent = label;
+        btn.addEventListener('click', () => {
+          state[key].color = color;
+          cell.className = 'day-cell' + (color ? ' ' + color : '');
+          scheduleSave();
+        });
         colorBtns.appendChild(btn);
       });
-      cell.appendChild(textarea); cell.appendChild(colorBtns); col.appendChild(cell); grid.appendChild(col);
+
+      cell.appendChild(textarea);
+      cell.appendChild(colorBtns);
+      row.appendChild(cell);
+      grid.appendChild(row);
     });
   }
 
-  fetch(API).then(r => r.json()).then(d => { state = d; buildUI(); }).catch(() => { loadingMsg.textContent = '❌ Erreur de connexion.'; });
+  fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.json())
+    .then(d => { state = d || {}; buildUI(); })
+    .catch(() => { loadingMsg.textContent = '❌ Erreur de connexion.'; });
 </script>
 </body>
 </html>
