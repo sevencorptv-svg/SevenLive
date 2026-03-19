@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Overlay Lives</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: transparent;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: Impact, Arial Black, sans-serif;
+  }
+
+  .overlay-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 12px;
+    background: rgba(0,0,0,0.95);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+    padding: 10px 12px 12px;
+    gap: 8px;
+  }
+
+  .top-title {
+    font-family: Impact, Arial Black, sans-serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    width: 100%;
+    text-align: center;
+  }
+
+  .calendar-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .live-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .live-header {
+    font-family: Impact, Arial Black, sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    text-align: center;
+    padding-bottom: 3px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+  }
+
+  .live-cell {
+    width: 130px;
+    height: 60px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    transition: all 0.35s ease;
+  }
+
+  .live-cell.green {
+    background: rgba(34,197,94,0.35);
+    border-color: #22c55e;
+    box-shadow: 0 0 14px rgba(34,197,94,0.35), inset 0 1px 0 rgba(34,197,94,0.4);
+  }
+  .live-cell.red {
+    background: rgba(239,68,68,0.35);
+    border-color: #ef4444;
+    box-shadow: 0 0 14px rgba(239,68,68,0.35), inset 0 1px 0 rgba(239,68,68,0.4);
+  }
+  .live-cell.gray {
+    background: #6b7280;
+    border-color: #9ca3af;
+    box-shadow: 0 0 14px rgba(107,114,128,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .cell-text {
+    font-family: Impact, Arial Black, sans-serif;
+    font-size: 14px;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+  }
+</style>
+</head>
+<body>
+<div class="overlay-wrapper">
+  <div class="top-title">Score des lives</div>
+  <div class="calendar-grid" id="calGrid"></div>
+</div>
+
+<script>
+  const BIN_ID = 'd9b3e782f440cad27817';
+  const lives = ['LIVE 1','LIVE 2','LIVE 3'];
+  const grid = document.getElementById('calGrid');
+  const cells = [];
+
+  lives.forEach((live, i) => {
+    const col = document.createElement('div'); col.className = 'live-col';
+    const header = document.createElement('div'); header.className = 'live-header';
+    header.textContent = live;
+    col.appendChild(header);
+    const cell = document.createElement('div'); cell.className = 'live-cell';
+    const text = document.createElement('div'); text.className = 'cell-text';
+    cell.appendChild(text); col.appendChild(cell);
+    grid.appendChild(col);
+    cells.push({ cell, text });
+  });
+
+  async function load() {
+    try {
+      const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), { cache: 'no-store' });
+      const data = await res.json();
+      lives.forEach((_, i) => {
+        const d = data['live-' + i] || {};
+        cells[i].cell.className = 'live-cell' + (d.color ? ' ' + d.color : '');
+        cells[i].text.textContent = (d.text || '').toUpperCase();
+      });
+    } catch(e) {}
+  }
+
+  load();
+  setInterval(load, 2000);
+</script>
+</body>
+</html>
