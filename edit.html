@@ -118,7 +118,7 @@
     <div class="mvp-row">
       <span class="row-label">MVP</span>
       <div class="row-cell" id="totalMvpCell">
-        <textarea class="cell-textarea" id="totalMvpTA" placeholder="..."></textarea>
+        <div id="totalMvpDisplay" style="flex:1;text-align:center;font-family:Impact,Arial Black;font-size:13px;color:#fff;letter-spacing:1px;text-transform:uppercase;">...</div>
       </div>
     </div>
   </div>
@@ -154,8 +154,18 @@
     disp.textContent = sum;
     disp.className = 'total-display ' + color;
     state['total'] = { color, text: String(sum) };
-    // sync mvp total color
     document.getElementById('totalMvpCell').className = 'row-cell ' + color;
+
+    // MVP auto : pseudo le plus fréquent
+    const mvpCount = {};
+    days.forEach((_, i) => {
+      const pseudo = (state['mvp-' + i]?.text || '').trim().toUpperCase();
+      if (pseudo) mvpCount[pseudo] = (mvpCount[pseudo] || 0) + 1;
+    });
+    let topMvp = '', topCount = 0;
+    Object.entries(mvpCount).forEach(([p, c]) => { if (c > topCount) { topCount = c; topMvp = p; } });
+    const mvpDisplay = document.getElementById('totalMvpDisplay');
+    if (mvpDisplay) mvpDisplay.textContent = topMvp ? topMvp + (topCount > 1 ? ' ×' + topCount : '') : '...';
   }
 
   async function saveData() {
@@ -213,11 +223,7 @@
       grid.appendChild(block);
     });
 
-    // Total MVP textarea
-    const totalMvpTA = document.getElementById('totalMvpTA');
-    if (!state['mvp-total']) state['mvp-total'] = { text: '' };
-    totalMvpTA.value = state['mvp-total'].text || '';
-    totalMvpTA.addEventListener('input', () => { state['mvp-total'].text = totalMvpTA.value; scheduleSave(); });
+    // MVP Total = lecture seule, calculé automatiquement
 
     updateTotal();
   }

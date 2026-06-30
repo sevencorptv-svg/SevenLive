@@ -229,9 +229,17 @@
       document.getElementById('totalScoreCell').className = 'total-score-cell ' + totalColor;
       document.getElementById('totalScoreText').textContent = sum;
 
-      const tm = data['mvp-total'] || {};
+      // MVP auto : pseudo le plus fréquent dans les cases MVP
+      const mvpCount = {};
+      days.forEach((_, i) => {
+        const m = data['mvp-' + i] || {};
+        const pseudo = (m.text || '').trim().toUpperCase();
+        if (pseudo) mvpCount[pseudo] = (mvpCount[pseudo] || 0) + 1;
+      });
+      let topMvp = '', topCount = 0;
+      Object.entries(mvpCount).forEach(([p, c]) => { if (c > topCount) { topCount = c; topMvp = p; } });
       document.getElementById('totalMvpCell').className = 'total-mvp-cell ' + totalColor;
-      document.getElementById('totalMvpText').textContent = (tm.text || '').toUpperCase();
+      document.getElementById('totalMvpText').textContent = topMvp ? topMvp + (topCount > 1 ? ' ×' + topCount : '') : '';
     } catch(e) {}
   }
 
