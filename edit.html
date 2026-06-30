@@ -13,73 +13,132 @@
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;
-    padding: 12px;
+    padding: 10px;
   }
-  h1 { font-family: Arial Black; font-size: 15px; letter-spacing: 2px; color: #fff; margin-bottom: 2px; text-transform: uppercase; }
-  .subtitle { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 10px; letter-spacing: 0.5px; text-align: center; }
+  h1 { font-family: Arial Black; font-size: 14px; letter-spacing: 2px; color: #fff; margin-bottom: 2px; text-transform: uppercase; }
+  .subtitle { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 8px; letter-spacing: 0.5px; text-align: center; }
 
-  .calendar-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 480px; }
-  .day-row { display: flex; flex-direction: row; align-items: center; gap: 6px; }
-  .day-row.total-row { margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); }
-  .day-header { font-family: Arial Black; font-size: 11px; letter-spacing: 1px; color: #fff; text-transform: uppercase; width: 38px; text-align: right; flex-shrink: 0; }
-  .day-cell {
-    flex: 1; border-radius: 6px; background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(255,255,255,0.1); padding: 4px;
-    display: flex; flex-direction: row; align-items: center; gap: 4px; transition: all 0.3s;
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    max-width: 700px;
   }
-  .day-cell.total { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
-  .day-cell.green { background: rgba(34,197,94,0.2);   border-color: #22c55e; }
-  .day-cell.red   { background: rgba(239,68,68,0.2);   border-color: #ef4444; }
-  .day-cell.gray  { background: #6b7280;               border-color: #9ca3af; }
+
+  .day-block {
+    display: flex; flex-direction: column; gap: 3px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 6px;
+  }
+  .day-label {
+    font-family: Arial Black; font-size: 11px; letter-spacing: 1px;
+    color: rgba(255,255,255,0.7); text-transform: uppercase; text-align: center;
+    margin-bottom: 2px;
+  }
+  .score-row, .mvp-row { display: flex; flex-direction: row; align-items: center; gap: 4px; }
+  .row-label {
+    font-family: Arial Black; font-size: 9px; letter-spacing: 1px;
+    color: rgba(255,255,255,0.35); text-transform: uppercase; width: 30px; text-align: right; flex-shrink: 0;
+  }
+  .row-cell {
+    flex: 1; border-radius: 5px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: row; align-items: center; gap: 3px;
+    padding: 3px; transition: all 0.3s;
+  }
+  .row-cell.green { background: rgba(34,197,94,0.2);  border-color: #22c55e; }
+  .row-cell.red   { background: rgba(239,68,68,0.2);  border-color: #ef4444; }
+  .row-cell.gray  { background: #6b7280;              border-color: #9ca3af; }
 
   .cell-textarea {
-    flex: 1; height: 28px; background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;
-    font-family: Impact, Arial Black; font-size: 11px; letter-spacing: 0.5px;
+    flex: 1; height: 24px; background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 3px;
+    color: #fff; font-family: Impact, Arial Black; font-size: 11px;
     text-transform: uppercase; padding: 2px; resize: none; outline: none; text-align: center;
   }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
-
-  .total-display {
-    flex: 1; height: 28px; display: flex; align-items: center; justify-content: center;
-    font-family: Impact, Arial Black; font-size: 13px; letter-spacing: 1px; color: #fff;
-  }
-
-  .color-btns { display: flex; flex-direction: row; gap: 3px; }
+  .color-btns { display: flex; flex-direction: row; gap: 2px; }
   .btn-color {
-    width: 22px; height: 22px; border: none; border-radius: 4px;
-    cursor: pointer; font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border: none; border-radius: 3px;
+    cursor: pointer; font-size: 9px; font-weight: 700;
     transition: transform 0.15s; display: flex; align-items: center; justify-content: center;
   }
-  .btn-color:hover { transform: scale(1.15); }
+  .btn-color:hover { transform: scale(1.2); }
   .btn-green { background: #22c55e; }
   .btn-red   { background: #ef4444; }
   .btn-gray  { background: #9ca3af; }
-  .btn-clear { background: rgba(255,255,255,0.12); color: #fff; font-size: 10px; border: 1px solid rgba(255,255,255,0.25); }
+  .btn-clear { background: rgba(255,255,255,0.15); color: #fff; font-size: 9px; border: 1px solid rgba(255,255,255,0.2); }
 
-  .saved-indicator { margin-top: 8px; font-size: 11px; color: #22c55e; letter-spacing: 1px; height: 14px; opacity: 0; transition: opacity 0.5s; }
+  /* TOTAL */
+  .total-section {
+    width: 100%; max-width: 700px; margin-top: 6px;
+    padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .total-block {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 6px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .total-title {
+    font-family: Arial Black; font-size: 11px; letter-spacing: 2px;
+    color: #fff; text-transform: uppercase; text-align: center; margin-bottom: 2px;
+  }
+  .total-display {
+    height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Impact, Arial Black; font-size: 16px; color: #fff; letter-spacing: 1px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s;
+  }
+  .total-display.green { background: rgba(34,197,94,0.2); border-color: #22c55e; }
+  .total-display.red   { background: rgba(239,68,68,0.2); border-color: #ef4444; }
+  .total-display.gray  { background: #6b7280;             border-color: #9ca3af; }
+
+  .saved-indicator { margin-top: 6px; font-size: 10px; color: #22c55e; letter-spacing: 1px; height: 12px; opacity: 0; transition: opacity 0.5s; text-align: center; }
   .saved-indicator.show { opacity: 1; }
   .loading { color: rgba(255,255,255,0.4); font-size: 12px; margin-bottom: 12px; }
 </style>
 </head>
 <body>
 <h1>🎛 Éditeur Overlay</h1>
-<div class="subtitle">Le TOTAL se calcule automatiquement (somme des chiffres de la semaine)</div>
+<div class="subtitle">Score auto-calculé · Modifications en temps réel</div>
 <div class="loading" id="loadingMsg">Chargement...</div>
-<div class="calendar-grid" id="calGrid" style="display:none"></div>
+
+<div class="grid-2col" id="calGrid" style="display:none"></div>
+
+<div class="total-section" id="totalSection" style="display:none">
+  <div class="total-block">
+    <div class="total-title">TOTAL (auto)</div>
+    <div class="total-display" id="totalDisplay">0</div>
+    <div class="mvp-row">
+      <span class="row-label">MVP</span>
+      <div class="row-cell" id="totalMvpCell">
+        <textarea class="cell-textarea" id="totalMvpTA" placeholder="..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="saved-indicator" id="savedMsg">✅ Sauvegardé !</div>
 
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
   const API = 'https://api.npoint.io/' + BIN_ID;
-  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM'];
+  const order = [0,3,1,4,2,5];
   const grid = document.getElementById('calGrid');
   const savedMsg = document.getElementById('savedMsg');
   const loadingMsg = document.getElementById('loadingMsg');
+  const totalSection = document.getElementById('totalSection');
   let state = {};
   let saveTimeout = null;
-  const dayCellRefs = [];
-  let totalDisplay, totalCellEl;
+  const scoreRefs = {};
+  const mvpRefs = {};
 
   function extractNumber(str) {
     if (!str) return 0;
@@ -90,12 +149,13 @@
   function updateTotal() {
     let sum = 0;
     days.forEach((_, i) => { sum += extractNumber(state['day-' + i]?.text); });
-    let color = 'gray';
-    if (sum > 0) color = 'green';
-    else if (sum < 0) color = 'red';
-    if (totalDisplay) totalDisplay.textContent = sum;
-    if (totalCellEl) totalCellEl.className = 'day-cell total ' + color;
+    const color = sum > 0 ? 'green' : sum < 0 ? 'red' : 'gray';
+    const disp = document.getElementById('totalDisplay');
+    disp.textContent = sum;
+    disp.className = 'total-display ' + color;
     state['total'] = { color, text: String(sum) };
+    // sync mvp total color
+    document.getElementById('totalMvpCell').className = 'row-cell ' + color;
   }
 
   async function saveData() {
@@ -107,67 +167,76 @@
     } catch(e) {}
   }
 
-  function scheduleSave() {
-    updateTotal();
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveData, 600);
-  }
-
-  function buildDayRow(label, key, container) {
-    if (!state[key]) state[key] = { color: '', text: '' };
-
-    const row = document.createElement('div'); row.className = 'day-row';
-    const header = document.createElement('div'); header.className = 'day-header'; header.textContent = label;
-    row.appendChild(header);
-
-    const cell = document.createElement('div');
-    cell.className = 'day-cell' + (state[key].color ? ' ' + state[key].color : '');
-
-    const textarea = document.createElement('textarea');
-    textarea.className = 'cell-textarea';
-    textarea.placeholder = '...';
-    textarea.value = state[key].text || '';
-    textarea.addEventListener('input', () => { state[key].text = textarea.value; scheduleSave(); });
-
-    const colorBtns = document.createElement('div'); colorBtns.className = 'color-btns';
-    [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⬜','btn-gray'],['','✕','btn-clear']].forEach(([color, lbl, cls]) => {
-      const btn = document.createElement('button');
-      btn.className = 'btn-color ' + cls; btn.textContent = lbl;
-      btn.addEventListener('click', () => {
-        state[key].color = color;
-        cell.className = 'day-cell' + (color ? ' ' + color : '');
-        scheduleSave();
-      });
-      colorBtns.appendChild(btn);
-    });
-
-    cell.appendChild(textarea); cell.appendChild(colorBtns);
-    row.appendChild(cell); container.appendChild(row);
-  }
-
-  function buildTotalRow(container) {
-    const row = document.createElement('div'); row.className = 'day-row total-row';
-    const header = document.createElement('div'); header.className = 'day-header'; header.textContent = 'TOTAL';
-    row.appendChild(header);
-
-    totalCellEl = document.createElement('div');
-    totalCellEl.className = 'day-cell total';
-
-    totalDisplay = document.createElement('div');
-    totalDisplay.className = 'total-display';
-    totalDisplay.textContent = '0';
-
-    totalCellEl.appendChild(totalDisplay);
-    row.appendChild(totalCellEl);
-    container.appendChild(row);
-  }
+  function scheduleSave() { updateTotal(); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
 
   function buildUI() {
-    grid.style.display = 'flex';
+    grid.style.display = 'grid';
+    totalSection.style.display = 'flex';
     loadingMsg.style.display = 'none';
-    days.forEach((day, i) => buildDayRow(day, 'day-' + i, grid));
-    buildTotalRow(grid);
+
+    order.forEach(i => {
+      const key = 'day-' + i;
+      const mvpKey = 'mvp-' + i;
+      if (!state[key]) state[key] = { color: '', text: '' };
+      if (!state[mvpKey]) state[mvpKey] = { text: '' };
+
+      const block = document.createElement('div'); block.className = 'day-block';
+      const label = document.createElement('div'); label.className = 'day-label'; label.textContent = days[i];
+      block.appendChild(label);
+
+      // Score row
+      const scoreRow = document.createElement('div'); scoreRow.className = 'score-row';
+      const scoreLabel = document.createElement('span'); scoreLabel.className = 'row-label'; scoreLabel.textContent = 'SCORE';
+      const scoreCell = document.createElement('div');
+      scoreCell.className = 'row-cell' + (state[key].color ? ' ' + state[key].color : '');
+      const scoreTA = document.createElement('textarea'); scoreTA.className = 'cell-textarea';
+      scoreTA.placeholder = '0'; scoreTA.value = state[key].text || '';
+      scoreTA.addEventListener('input', () => { state[key].text = scoreTA.value; scheduleSave(); });
+      const scoreBtns = buildColorBtns(key, scoreCell);
+      scoreCell.appendChild(scoreTA); scoreCell.appendChild(scoreBtns);
+      scoreRow.appendChild(scoreLabel); scoreRow.appendChild(scoreCell);
+      block.appendChild(scoreRow);
+
+      // MVP row
+      const mvpRow = document.createElement('div'); mvpRow.className = 'mvp-row';
+      const mvpLabel = document.createElement('span'); mvpLabel.className = 'row-label'; mvpLabel.textContent = 'MVP';
+      const mvpCell = document.createElement('div'); mvpCell.className = 'row-cell' + (state[key].color ? ' ' + state[key].color : '');
+      const mvpTA = document.createElement('textarea'); mvpTA.className = 'cell-textarea';
+      mvpTA.placeholder = '...'; mvpTA.value = state[mvpKey].text || '';
+      mvpTA.addEventListener('input', () => { state[mvpKey].text = mvpTA.value; scheduleSave(); });
+      mvpCell.appendChild(mvpTA);
+      mvpRow.appendChild(mvpLabel); mvpRow.appendChild(mvpCell);
+      block.appendChild(mvpRow);
+
+      scoreRefs[i] = scoreCell;
+      mvpRefs[i] = mvpCell;
+      grid.appendChild(block);
+    });
+
+    // Total MVP textarea
+    const totalMvpTA = document.getElementById('totalMvpTA');
+    if (!state['mvp-total']) state['mvp-total'] = { text: '' };
+    totalMvpTA.value = state['mvp-total'].text || '';
+    totalMvpTA.addEventListener('input', () => { state['mvp-total'].text = totalMvpTA.value; scheduleSave(); });
+
     updateTotal();
+  }
+
+  function buildColorBtns(key, cell) {
+    const div = document.createElement('div'); div.className = 'color-btns';
+    [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⬜','btn-gray'],['','✕','btn-clear']].forEach(([color, lbl, cls]) => {
+      const btn = document.createElement('button'); btn.className = 'btn-color ' + cls; btn.textContent = lbl;
+      btn.addEventListener('click', () => {
+        state[key].color = color;
+        cell.className = 'row-cell' + (color ? ' ' + color : '');
+        // sync mvp cell color
+        const i = parseInt(key.split('-')[1]);
+        if (mvpRefs[i]) mvpRefs[i].className = 'row-cell' + (color ? ' ' + color : '');
+        scheduleSave();
+      });
+      div.appendChild(btn);
+    });
+    return div;
   }
 
   fetch(API + '?t=' + Date.now(), { cache: 'no-store' })

@@ -9,93 +9,199 @@
     background: transparent;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     min-height: 100vh;
     font-family: Impact, Arial Black, sans-serif;
   }
   .overlay-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    margin: 24px;
+    margin: 20px;
     background: #000;
-    border-radius: 32px;
+    border-radius: 28px;
     border: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 8px 60px rgba(0,0,0,0.9);
-    overflow: hidden;
-    padding: 20px 20px 20px 0;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
-  .side-title {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    font-family: Impact, Arial Black, sans-serif;
-    font-size: 20px;
-    letter-spacing: 10px;
+
+  .top-title {
+    font-family: Impact, Arial Black;
+    font-size: 14px;
+    letter-spacing: 6px;
     color: rgba(255,255,255,0.3);
     text-transform: uppercase;
-    padding: 20px 16px;
-    white-space: nowrap;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* 2 colonnes */
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .day-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .day-label {
+    font-family: Impact, Arial Black;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .score-cell {
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid rgba(255,255,255,0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-right: 2px solid rgba(255,255,255,0.07);
-    margin-right: 20px;
-  }
-  .calendar-grid { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
-  .day-row { display: flex; flex-direction: row; align-items: center; gap: 16px; }
-  .day-row.total-row { margin-top: 6px; padding-top: 16px; border-top: 2px solid rgba(255,255,255,0.1); }
-  .day-header { font-family: Impact, Arial Black, sans-serif; font-size: 26px; letter-spacing: 4px; color: rgba(255,255,255,0.7); text-transform: uppercase; width: 72px; text-align: right; flex-shrink: 0; }
-  .day-header.total-header { color: #fff; }
-  .day-cell {
-    width: 260px; height: 104px; border-radius: 24px;
-    background: rgba(255,255,255,0.04); border: 3px solid rgba(255,255,255,0.08);
-    display: flex; align-items: center; justify-content: center; padding: 12px 20px;
+    padding: 6px 10px;
+    overflow: hidden;
     transition: all 0.35s ease;
   }
-  .day-cell.total { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); }
-  .day-cell.green { background: rgba(34,197,94,0.35); border-color: #22c55e; box-shadow: 0 0 28px rgba(34,197,94,0.35), inset 0 2px 0 rgba(34,197,94,0.4); }
-  .day-cell.red   { background: rgba(239,68,68,0.35); border-color: #ef4444; box-shadow: 0 0 28px rgba(239,68,68,0.35), inset 0 2px 0 rgba(239,68,68,0.4); }
-  .day-cell.gray  { background: #6b7280; border-color: #9ca3af; box-shadow: 0 0 28px rgba(107,114,128,0.5), inset 0 2px 0 rgba(255,255,255,0.15); }
-  .cell-text {
-    font-family: Impact, Arial Black, sans-serif; font-size: 26px; color: #fff;
-    text-align: center; text-transform: uppercase; letter-spacing: 2px; line-height: 1.3;
-    white-space: pre-wrap; word-break: break-word; text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+  .mvp-cell {
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 10px;
+    overflow: hidden;
+    transition: all 0.35s ease;
   }
+
+  .score-cell.green { background: rgba(34,197,94,0.35);  border-color: #22c55e; box-shadow: 0 0 18px rgba(34,197,94,0.3); }
+  .score-cell.red   { background: rgba(239,68,68,0.35);  border-color: #ef4444; box-shadow: 0 0 18px rgba(239,68,68,0.3); }
+  .score-cell.gray  { background: #6b7280;               border-color: #9ca3af; box-shadow: 0 0 18px rgba(107,114,128,0.4); }
+  .mvp-cell.green   { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.35); }
+  .mvp-cell.red     { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.35); }
+  .mvp-cell.gray    { background: rgba(107,114,128,0.25);border-color: #9ca3af; }
+
+  .cell-text {
+    font-family: Impact, Arial Black;
+    font-size: 20px; color: #fff; text-align: center; text-transform: uppercase;
+    letter-spacing: 1px; line-height: 1.2;
+    overflow: hidden; max-width: 100%;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.9); word-break: break-word;
+  }
+  .mvp-label {
+    font-family: Impact, Arial Black;
+    font-size: 9px; letter-spacing: 3px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; flex-shrink: 0;
+  }
+  .mvp-text {
+    font-family: Impact, Arial Black;
+    font-size: 13px; color: #fff; text-align: center; text-transform: uppercase;
+    letter-spacing: 0.5px; line-height: 1.2; overflow: hidden; max-width: 100%;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9); word-break: break-word;
+  }
+
+  /* TOTAL sur toute la largeur */
+  .total-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 10px;
+    border-top: 2px solid rgba(255,255,255,0.1);
+  }
+  .total-label {
+    font-family: Impact, Arial Black;
+    font-size: 14px; letter-spacing: 4px; color: #fff;
+    text-transform: uppercase; text-align: center;
+  }
+  .total-score-cell {
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center; padding: 6px 14px;
+    overflow: hidden; transition: all 0.35s ease;
+  }
+  .total-score-cell.green { background: rgba(34,197,94,0.35); border-color: #22c55e; box-shadow: 0 0 24px rgba(34,197,94,0.35); }
+  .total-score-cell.red   { background: rgba(239,68,68,0.35);  border-color: #ef4444; box-shadow: 0 0 24px rgba(239,68,68,0.35); }
+  .total-score-cell.gray  { background: #6b7280;               border-color: #9ca3af; }
+  .total-text {
+    font-family: Impact, Arial Black;
+    font-size: 28px; color: #fff; text-align: center; text-transform: uppercase;
+    letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+    overflow: hidden; max-width: 100%;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .total-mvp-cell {
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 4px 10px; overflow: hidden; transition: all 0.35s ease;
+  }
+  .total-mvp-cell.green { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.35); }
+  .total-mvp-cell.red   { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.35); }
+  .total-mvp-cell.gray  { background: rgba(107,114,128,0.25);border-color: #9ca3af; }
 </style>
 </head>
 <body>
 <div class="overlay-wrapper">
-  <div class="side-title">Score de la semaine</div>
-  <div class="calendar-grid" id="calGrid"></div>
+  <div class="top-title">Score de la semaine</div>
+
+  <div class="grid-2col" id="calGrid"></div>
+
+  <div class="total-section">
+    <div class="total-label">TOTAL</div>
+    <div class="total-score-cell" id="totalScoreCell">
+      <div class="total-text" id="totalScoreText"></div>
+    </div>
+    <div class="total-mvp-cell" id="totalMvpCell">
+      <span class="mvp-label">MVP</span>
+      <div class="mvp-text" id="totalMvpText"></div>
+    </div>
+  </div>
 </div>
 
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
-  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM'];
+  // Ordre : col gauche = 0,1,2 / col droite = 3,4,5
+  const order = [0,3,1,4,2,5];
   const grid = document.getElementById('calGrid');
-  const cells = [];
+  const cells = new Array(6);
+  const mvpCells = new Array(6);
 
-  days.forEach((day, i) => {
-    const row = document.createElement('div'); row.className = 'day-row';
-    const header = document.createElement('div'); header.className = 'day-header';
-    header.textContent = day;
-    row.appendChild(header);
-    const cell = document.createElement('div'); cell.className = 'day-cell';
-    const text = document.createElement('div'); text.className = 'cell-text';
-    cell.appendChild(text); row.appendChild(cell);
-    grid.appendChild(row);
-    cells.push({ cell, text });
+  order.forEach(i => {
+    const block = document.createElement('div'); block.className = 'day-block';
+    const label = document.createElement('div'); label.className = 'day-label'; label.textContent = days[i];
+    block.appendChild(label);
+
+    const scoreCell = document.createElement('div'); scoreCell.className = 'score-cell';
+    const scoreText = document.createElement('div'); scoreText.className = 'cell-text';
+    scoreCell.appendChild(scoreText); block.appendChild(scoreCell);
+
+    const mvpCell = document.createElement('div'); mvpCell.className = 'mvp-cell';
+    const mvpLabel = document.createElement('span'); mvpLabel.className = 'mvp-label'; mvpLabel.textContent = 'MVP';
+    const mvpText = document.createElement('div'); mvpText.className = 'mvp-text';
+    mvpCell.appendChild(mvpLabel); mvpCell.appendChild(mvpText);
+    block.appendChild(mvpCell);
+
+    grid.appendChild(block);
+    cells[i] = { scoreCell, scoreText };
+    mvpCells[i] = { mvpCell, mvpText };
   });
-
-  const totalRow = document.createElement('div'); totalRow.className = 'day-row total-row';
-  const totalHeader = document.createElement('div'); totalHeader.className = 'day-header total-header';
-  totalHeader.textContent = 'TOTAL';
-  totalRow.appendChild(totalHeader);
-  const totalCell = document.createElement('div'); totalCell.className = 'day-cell total';
-  const totalText = document.createElement('div'); totalText.className = 'cell-text';
-  totalCell.appendChild(totalText); totalRow.appendChild(totalCell);
-  grid.appendChild(totalRow);
 
   function extractNumber(str) {
     if (!str) return 0;
@@ -108,20 +214,24 @@
       const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), { cache: 'no-store' });
       const data = await res.json();
       let sum = 0;
+
       days.forEach((_, i) => {
         const d = data['day-' + i] || {};
-        cells[i].cell.className = 'day-cell' + (d.color ? ' ' + d.color : '');
-        cells[i].text.textContent = (d.text || '').toUpperCase();
+        const m = data['mvp-' + i] || {};
+        cells[i].scoreCell.className = 'score-cell' + (d.color ? ' ' + d.color : '');
+        cells[i].scoreText.textContent = (d.text || '').toUpperCase();
+        mvpCells[i].mvpCell.className = 'mvp-cell' + (d.color ? ' ' + d.color : '');
+        mvpCells[i].mvpText.textContent = (m.text || '').toUpperCase();
         sum += extractNumber(d.text);
       });
 
-      // Total auto-calculé
-      let totalColor = 'gray';
-      if (sum > 0) totalColor = 'green';
-      else if (sum < 0) totalColor = 'red';
+      const totalColor = sum > 0 ? 'green' : sum < 0 ? 'red' : 'gray';
+      document.getElementById('totalScoreCell').className = 'total-score-cell ' + totalColor;
+      document.getElementById('totalScoreText').textContent = sum;
 
-      totalCell.className = 'day-cell total ' + totalColor;
-      totalText.textContent = sum;
+      const tm = data['mvp-total'] || {};
+      document.getElementById('totalMvpCell').className = 'total-mvp-cell ' + totalColor;
+      document.getElementById('totalMvpText').textContent = (tm.text || '').toUpperCase();
     } catch(e) {}
   }
 
