@@ -5,57 +5,57 @@
 <title>Éditeur Overlay</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
   body {
     background: #111;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
     font-family: Arial, sans-serif;
-    padding: 30px 20px;
+    padding: 12px;
   }
-  h1 { font-family: Arial Black; font-size: 20px; letter-spacing: 3px; color: #fff; margin-bottom: 6px; text-transform: uppercase; }
-  .subtitle { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 24px; letter-spacing: 1px; }
+  h1 { font-family: Arial Black; font-size: 15px; letter-spacing: 2px; color: #fff; margin-bottom: 2px; text-transform: uppercase; }
+  .subtitle { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 10px; letter-spacing: 0.5px; }
 
   .calendar-grid {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     width: 100%;
-    max-width: 520px;
+    max-width: 480px;
   }
   .day-row {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
   }
   .day-row.total-row {
-    margin-top: 8px;
-    padding-top: 14px;
+    margin-top: 4px;
+    padding-top: 6px;
     border-top: 1px solid rgba(255,255,255,0.15);
   }
   .day-header {
     font-family: Arial Black;
-    font-size: 15px;
-    letter-spacing: 2px;
+    font-size: 11px;
+    letter-spacing: 1px;
     color: #fff;
     text-transform: uppercase;
-    width: 50px;
+    width: 38px;
     text-align: right;
     flex-shrink: 0;
   }
   .day-cell {
     flex: 1;
-    border-radius: 8px;
+    border-radius: 6px;
     background: rgba(255,255,255,0.05);
-    border: 2px solid rgba(255,255,255,0.1);
-    padding: 8px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    padding: 4px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     transition: all 0.3s;
   }
   .day-cell.total { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
@@ -65,37 +65,37 @@
 
   .cell-textarea {
     flex: 1;
-    min-height: 50px;
+    height: 28px;
     background: rgba(0,0,0,0.3);
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px;
+    border-radius: 4px;
     color: #fff;
     font-family: Impact, Arial Black;
-    font-size: 14px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    padding: 6px;
+    padding: 2px;
     resize: none;
     outline: none;
     text-align: center;
   }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
 
-  .color-btns { display: flex; flex-direction: column; gap: 5px; }
+  .color-btns { display: flex; flex-direction: row; gap: 3px; }
   .btn-color {
-    width: 36px; height: 36px; border: none; border-radius: 6px;
-    cursor: pointer; font-size: 15px; font-weight: 700;
+    width: 22px; height: 22px; border: none; border-radius: 4px;
+    cursor: pointer; font-size: 10px; font-weight: 700;
     transition: transform 0.15s; display: flex; align-items: center; justify-content: center;
   }
   .btn-color:hover { transform: scale(1.15); }
   .btn-green { background: #22c55e; }
   .btn-red   { background: #ef4444; }
   .btn-gray  { background: #9ca3af; }
-  .btn-clear { background: rgba(255,255,255,0.12); color: #fff; font-size: 14px; border: 1px solid rgba(255,255,255,0.25); }
+  .btn-clear { background: rgba(255,255,255,0.12); color: #fff; font-size: 10px; border: 1px solid rgba(255,255,255,0.25); }
 
-  .saved-indicator { margin-top: 16px; font-size: 13px; color: #22c55e; letter-spacing: 1px; height: 20px; opacity: 0; transition: opacity 0.5s; }
+  .saved-indicator { margin-top: 8px; font-size: 11px; color: #22c55e; letter-spacing: 1px; height: 14px; opacity: 0; transition: opacity 0.5s; }
   .saved-indicator.show { opacity: 1; }
-  .loading { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 20px; }
+  .loading { color: rgba(255,255,255,0.4); font-size: 12px; margin-bottom: 12px; }
 </style>
 </head>
 <body>
