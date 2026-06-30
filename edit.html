@@ -93,10 +93,9 @@
     let color = 'gray';
     if (sum > 0) color = 'green';
     else if (sum < 0) color = 'red';
-    const sign = sum > 0 ? '+' : '';
-    if (totalDisplay) totalDisplay.textContent = sign + sum;
+    if (totalDisplay) totalDisplay.textContent = sum;
     if (totalCellEl) totalCellEl.className = 'day-cell total ' + color;
-    state['total'] = { color, text: sign + sum };
+    state['total'] = { color, text: String(sum) };
   }
 
   async function saveData() {

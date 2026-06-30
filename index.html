@@ -121,8 +121,7 @@
       else if (sum < 0) totalColor = 'red';
 
       totalCell.className = 'day-cell total ' + totalColor;
-      const sign = sum > 0 ? '+' : '';
-      totalText.textContent = sign + sum;
+      totalText.textContent = sum;
     } catch(e) {}
   }
 
