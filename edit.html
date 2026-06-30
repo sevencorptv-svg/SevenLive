@@ -16,47 +16,16 @@
     padding: 12px;
   }
   h1 { font-family: Arial Black; font-size: 15px; letter-spacing: 2px; color: #fff; margin-bottom: 2px; text-transform: uppercase; }
-  .subtitle { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .subtitle { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 10px; letter-spacing: 0.5px; text-align: center; }
 
-  .calendar-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-    max-width: 480px;
-  }
-  .day-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-  }
-  .day-row.total-row {
-    margin-top: 4px;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255,255,255,0.15);
-  }
-  .day-header {
-    font-family: Arial Black;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: #fff;
-    text-transform: uppercase;
-    width: 38px;
-    text-align: right;
-    flex-shrink: 0;
-  }
+  .calendar-grid { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 480px; }
+  .day-row { display: flex; flex-direction: row; align-items: center; gap: 6px; }
+  .day-row.total-row { margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .day-header { font-family: Arial Black; font-size: 11px; letter-spacing: 1px; color: #fff; text-transform: uppercase; width: 38px; text-align: right; flex-shrink: 0; }
   .day-cell {
-    flex: 1;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    padding: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.3s;
+    flex: 1; border-radius: 6px; background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1); padding: 4px;
+    display: flex; flex-direction: row; align-items: center; gap: 4px; transition: all 0.3s;
   }
   .day-cell.total { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
   .day-cell.green { background: rgba(34,197,94,0.2);   border-color: #22c55e; }
@@ -64,22 +33,17 @@
   .day-cell.gray  { background: #6b7280;               border-color: #9ca3af; }
 
   .cell-textarea {
-    flex: 1;
-    height: 28px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px;
-    color: #fff;
-    font-family: Impact, Arial Black;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    padding: 2px;
-    resize: none;
-    outline: none;
-    text-align: center;
+    flex: 1; height: 28px; background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;
+    font-family: Impact, Arial Black; font-size: 11px; letter-spacing: 0.5px;
+    text-transform: uppercase; padding: 2px; resize: none; outline: none; text-align: center;
   }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
+
+  .total-display {
+    flex: 1; height: 28px; display: flex; align-items: center; justify-content: center;
+    font-family: Impact, Arial Black; font-size: 13px; letter-spacing: 1px; color: #fff;
+  }
 
   .color-btns { display: flex; flex-direction: row; gap: 3px; }
   .btn-color {
@@ -100,7 +64,7 @@
 </head>
 <body>
 <h1>🎛 Éditeur Overlay</h1>
-<div class="subtitle">Modifications en temps réel sur ton live</div>
+<div class="subtitle">Le TOTAL se calcule automatiquement (somme des chiffres de la semaine)</div>
 <div class="loading" id="loadingMsg">Chargement...</div>
 <div class="calendar-grid" id="calGrid" style="display:none"></div>
 <div class="saved-indicator" id="savedMsg">✅ Sauvegardé !</div>
@@ -114,6 +78,26 @@
   const loadingMsg = document.getElementById('loadingMsg');
   let state = {};
   let saveTimeout = null;
+  const dayCellRefs = [];
+  let totalDisplay, totalCellEl;
+
+  function extractNumber(str) {
+    if (!str) return 0;
+    const match = str.replace(',', '.').match(/-?\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+  }
+
+  function updateTotal() {
+    let sum = 0;
+    days.forEach((_, i) => { sum += extractNumber(state['day-' + i]?.text); });
+    let color = 'gray';
+    if (sum > 0) color = 'green';
+    else if (sum < 0) color = 'red';
+    const sign = sum > 0 ? '+' : '';
+    if (totalDisplay) totalDisplay.textContent = sign + sum;
+    if (totalCellEl) totalCellEl.className = 'day-cell total ' + color;
+    state['total'] = { color, text: sign + sum };
+  }
 
   async function saveData() {
     try {
@@ -124,17 +108,21 @@
     } catch(e) {}
   }
 
-  function scheduleSave() { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
+  function scheduleSave() {
+    updateTotal();
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveData, 600);
+  }
 
-  function buildRow(label, key, container, isTotal) {
+  function buildDayRow(label, key, container) {
     if (!state[key]) state[key] = { color: '', text: '' };
 
-    const row = document.createElement('div'); row.className = 'day-row' + (isTotal ? ' total-row' : '');
+    const row = document.createElement('div'); row.className = 'day-row';
     const header = document.createElement('div'); header.className = 'day-header'; header.textContent = label;
     row.appendChild(header);
 
     const cell = document.createElement('div');
-    cell.className = 'day-cell' + (isTotal ? ' total' : '') + (state[key].color ? ' ' + state[key].color : '');
+    cell.className = 'day-cell' + (state[key].color ? ' ' + state[key].color : '');
 
     const textarea = document.createElement('textarea');
     textarea.className = 'cell-textarea';
@@ -148,7 +136,7 @@
       btn.className = 'btn-color ' + cls; btn.textContent = lbl;
       btn.addEventListener('click', () => {
         state[key].color = color;
-        cell.className = 'day-cell' + (isTotal ? ' total' : '') + (color ? ' ' + color : '');
+        cell.className = 'day-cell' + (color ? ' ' + color : '');
         scheduleSave();
       });
       colorBtns.appendChild(btn);
@@ -158,11 +146,29 @@
     row.appendChild(cell); container.appendChild(row);
   }
 
+  function buildTotalRow(container) {
+    const row = document.createElement('div'); row.className = 'day-row total-row';
+    const header = document.createElement('div'); header.className = 'day-header'; header.textContent = 'TOTAL';
+    row.appendChild(header);
+
+    totalCellEl = document.createElement('div');
+    totalCellEl.className = 'day-cell total';
+
+    totalDisplay = document.createElement('div');
+    totalDisplay.className = 'total-display';
+    totalDisplay.textContent = '0';
+
+    totalCellEl.appendChild(totalDisplay);
+    row.appendChild(totalCellEl);
+    container.appendChild(row);
+  }
+
   function buildUI() {
     grid.style.display = 'flex';
     loadingMsg.style.display = 'none';
-    days.forEach((day, i) => buildRow(day, 'day-' + i, grid, false));
-    buildRow('TOTAL', 'total', grid, true);
+    days.forEach((day, i) => buildDayRow(day, 'day-' + i, grid));
+    buildTotalRow(grid);
+    updateTotal();
   }
 
   fetch(API + '?t=' + Date.now(), { cache: 'no-store' })

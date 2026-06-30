@@ -13,7 +13,6 @@
     min-height: 100vh;
     font-family: Impact, Arial Black, sans-serif;
   }
-
   .overlay-wrapper {
     display: flex;
     flex-direction: row;
@@ -26,7 +25,6 @@
     overflow: hidden;
     padding: 20px 20px 20px 0;
   }
-
   .side-title {
     writing-mode: vertical-rl;
     text-orientation: mixed;
@@ -44,87 +42,25 @@
     border-right: 2px solid rgba(255,255,255,0.07);
     margin-right: 20px;
   }
-
-  .calendar-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    justify-content: center;
-  }
-
-  .day-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .day-row.total-row {
-    margin-top: 6px;
-    padding-top: 16px;
-    border-top: 2px solid rgba(255,255,255,0.1);
-  }
-
-  .day-header {
-    font-family: Impact, Arial Black, sans-serif;
-    font-size: 26px;
-    letter-spacing: 4px;
-    color: rgba(255,255,255,0.7);
-    text-transform: uppercase;
-    width: 72px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  .day-header.total-header {
-    color: #fff;
-  }
-
+  .calendar-grid { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  .day-row { display: flex; flex-direction: row; align-items: center; gap: 16px; }
+  .day-row.total-row { margin-top: 6px; padding-top: 16px; border-top: 2px solid rgba(255,255,255,0.1); }
+  .day-header { font-family: Impact, Arial Black, sans-serif; font-size: 26px; letter-spacing: 4px; color: rgba(255,255,255,0.7); text-transform: uppercase; width: 72px; text-align: right; flex-shrink: 0; }
+  .day-header.total-header { color: #fff; }
   .day-cell {
-    width: 260px;
-    height: 104px;
-    border-radius: 24px;
-    background: rgba(255,255,255,0.04);
-    border: 3px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 20px;
+    width: 260px; height: 104px; border-radius: 24px;
+    background: rgba(255,255,255,0.04); border: 3px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center; padding: 12px 20px;
     transition: all 0.35s ease;
   }
-
-  .day-cell.total {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.3);
-  }
-
-  .day-cell.green {
-    background: rgba(34, 197, 94, 0.35);
-    border-color: #22c55e;
-    box-shadow: 0 0 28px rgba(34,197,94,0.35), inset 0 2px 0 rgba(34,197,94,0.4);
-  }
-  .day-cell.red {
-    background: rgba(239, 68, 68, 0.35);
-    border-color: #ef4444;
-    box-shadow: 0 0 28px rgba(239,68,68,0.35), inset 0 2px 0 rgba(239,68,68,0.4);
-  }
-  .day-cell.gray {
-    background: #6b7280;
-    border-color: #9ca3af;
-    box-shadow: 0 0 28px rgba(107,114,128,0.5), inset 0 2px 0 rgba(255,255,255,0.15);
-  }
-
+  .day-cell.total { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); }
+  .day-cell.green { background: rgba(34,197,94,0.35); border-color: #22c55e; box-shadow: 0 0 28px rgba(34,197,94,0.35), inset 0 2px 0 rgba(34,197,94,0.4); }
+  .day-cell.red   { background: rgba(239,68,68,0.35); border-color: #ef4444; box-shadow: 0 0 28px rgba(239,68,68,0.35), inset 0 2px 0 rgba(239,68,68,0.4); }
+  .day-cell.gray  { background: #6b7280; border-color: #9ca3af; box-shadow: 0 0 28px rgba(107,114,128,0.5), inset 0 2px 0 rgba(255,255,255,0.15); }
   .cell-text {
-    font-family: Impact, Arial Black, sans-serif;
-    font-size: 26px;
-    color: #fff;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    line-height: 1.3;
-    white-space: pre-wrap;
-    word-break: break-word;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+    font-family: Impact, Arial Black, sans-serif; font-size: 26px; color: #fff;
+    text-align: center; text-transform: uppercase; letter-spacing: 2px; line-height: 1.3;
+    white-space: pre-wrap; word-break: break-word; text-shadow: 0 2px 12px rgba(0,0,0,0.9);
   }
 </style>
 </head>
@@ -152,7 +88,6 @@
     cells.push({ cell, text });
   });
 
-  // Ligne TOTAL
   const totalRow = document.createElement('div'); totalRow.className = 'day-row total-row';
   const totalHeader = document.createElement('div'); totalHeader.className = 'day-header total-header';
   totalHeader.textContent = 'TOTAL';
@@ -162,18 +97,32 @@
   totalCell.appendChild(totalText); totalRow.appendChild(totalCell);
   grid.appendChild(totalRow);
 
+  function extractNumber(str) {
+    if (!str) return 0;
+    const match = str.replace(',', '.').match(/-?\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+  }
+
   async function load() {
     try {
       const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), { cache: 'no-store' });
       const data = await res.json();
+      let sum = 0;
       days.forEach((_, i) => {
         const d = data['day-' + i] || {};
         cells[i].cell.className = 'day-cell' + (d.color ? ' ' + d.color : '');
         cells[i].text.textContent = (d.text || '').toUpperCase();
+        sum += extractNumber(d.text);
       });
-      const t = data['total'] || {};
-      totalCell.className = 'day-cell total' + (t.color ? ' ' + t.color : '');
-      totalText.textContent = (t.text || '').toUpperCase();
+
+      // Total auto-calculé
+      let totalColor = 'gray';
+      if (sum > 0) totalColor = 'green';
+      else if (sum < 0) totalColor = 'red';
+
+      totalCell.className = 'day-cell total ' + totalColor;
+      const sign = sum > 0 ? '+' : '';
+      totalText.textContent = sign + sum;
     } catch(e) {}
   }
 
