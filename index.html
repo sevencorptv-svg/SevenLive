@@ -19,10 +19,10 @@
     flex-direction: row;
     align-items: stretch;
     margin: 24px;
-    background: rgba(0,0,0,0.95);
+    background: #000;
     border-radius: 32px;
     border: 2px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 60px rgba(0,0,0,0.8);
+    box-shadow: 0 8px 60px rgba(0,0,0,0.9);
     overflow: hidden;
     padding: 20px 20px 20px 0;
   }
@@ -59,6 +59,12 @@
     gap: 16px;
   }
 
+  .day-row.total-row {
+    margin-top: 6px;
+    padding-top: 16px;
+    border-top: 2px solid rgba(255,255,255,0.1);
+  }
+
   .day-header {
     font-family: Impact, Arial Black, sans-serif;
     font-size: 26px;
@@ -68,6 +74,10 @@
     width: 72px;
     text-align: right;
     flex-shrink: 0;
+  }
+
+  .day-header.total-header {
+    color: #fff;
   }
 
   .day-cell {
@@ -81,6 +91,11 @@
     justify-content: center;
     padding: 12px 20px;
     transition: all 0.35s ease;
+  }
+
+  .day-cell.total {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.3);
   }
 
   .day-cell.green {
@@ -137,6 +152,16 @@
     cells.push({ cell, text });
   });
 
+  // Ligne TOTAL
+  const totalRow = document.createElement('div'); totalRow.className = 'day-row total-row';
+  const totalHeader = document.createElement('div'); totalHeader.className = 'day-header total-header';
+  totalHeader.textContent = 'TOTAL';
+  totalRow.appendChild(totalHeader);
+  const totalCell = document.createElement('div'); totalCell.className = 'day-cell total';
+  const totalText = document.createElement('div'); totalText.className = 'cell-text';
+  totalCell.appendChild(totalText); totalRow.appendChild(totalCell);
+  grid.appendChild(totalRow);
+
   async function load() {
     try {
       const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), { cache: 'no-store' });
@@ -146,6 +171,9 @@
         cells[i].cell.className = 'day-cell' + (d.color ? ' ' + d.color : '');
         cells[i].text.textContent = (d.text || '').toUpperCase();
       });
+      const t = data['total'] || {};
+      totalCell.className = 'day-cell total' + (t.color ? ' ' + t.color : '');
+      totalText.textContent = (t.text || '').toUpperCase();
     } catch(e) {}
   }
 

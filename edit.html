@@ -31,6 +31,11 @@
     align-items: center;
     gap: 10px;
   }
+  .day-row.total-row {
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
   .day-header {
     font-family: Arial Black;
     font-size: 15px;
@@ -53,9 +58,10 @@
     gap: 8px;
     transition: all 0.3s;
   }
+  .day-cell.total { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
   .day-cell.green { background: rgba(34,197,94,0.2);   border-color: #22c55e; }
   .day-cell.red   { background: rgba(239,68,68,0.2);   border-color: #ef4444; }
-  .day-cell.gray  { background: rgba(156,163,175,0.2); border-color: #9ca3af; }
+  .day-cell.gray  { background: #6b7280;               border-color: #9ca3af; }
 
   .cell-textarea {
     flex: 1;
@@ -75,23 +81,11 @@
   }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
 
-  .color-btns {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
+  .color-btns { display: flex; flex-direction: column; gap: 5px; }
   .btn-color {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 700;
-    transition: transform 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 36px; height: 36px; border: none; border-radius: 6px;
+    cursor: pointer; font-size: 15px; font-weight: 700;
+    transition: transform 0.15s; display: flex; align-items: center; justify-content: center;
   }
   .btn-color:hover { transform: scale(1.15); }
   .btn-green { background: #22c55e; }
@@ -99,15 +93,7 @@
   .btn-gray  { background: #9ca3af; }
   .btn-clear { background: rgba(255,255,255,0.12); color: #fff; font-size: 14px; border: 1px solid rgba(255,255,255,0.25); }
 
-  .saved-indicator {
-    margin-top: 16px;
-    font-size: 13px;
-    color: #22c55e;
-    letter-spacing: 1px;
-    height: 20px;
-    opacity: 0;
-    transition: opacity 0.5s;
-  }
+  .saved-indicator { margin-top: 16px; font-size: 13px; color: #22c55e; letter-spacing: 1px; height: 20px; opacity: 0; transition: opacity 0.5s; }
   .saved-indicator.show { opacity: 1; }
   .loading { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 20px; }
 </style>
@@ -131,73 +117,52 @@
 
   async function saveData() {
     try {
-      await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state)
-      });
+      await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state) });
       savedMsg.classList.add('show');
       clearTimeout(savedMsg._t);
       savedMsg._t = setTimeout(() => savedMsg.classList.remove('show'), 1500);
     } catch(e) {}
   }
 
-  function scheduleSave() {
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveData, 600);
+  function scheduleSave() { clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
+
+  function buildRow(label, key, container, isTotal) {
+    if (!state[key]) state[key] = { color: '', text: '' };
+
+    const row = document.createElement('div'); row.className = 'day-row' + (isTotal ? ' total-row' : '');
+    const header = document.createElement('div'); header.className = 'day-header'; header.textContent = label;
+    row.appendChild(header);
+
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (isTotal ? ' total' : '') + (state[key].color ? ' ' + state[key].color : '');
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'cell-textarea';
+    textarea.placeholder = '...';
+    textarea.value = state[key].text || '';
+    textarea.addEventListener('input', () => { state[key].text = textarea.value; scheduleSave(); });
+
+    const colorBtns = document.createElement('div'); colorBtns.className = 'color-btns';
+    [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⬜','btn-gray'],['','✕','btn-clear']].forEach(([color, lbl, cls]) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-color ' + cls; btn.textContent = lbl;
+      btn.addEventListener('click', () => {
+        state[key].color = color;
+        cell.className = 'day-cell' + (isTotal ? ' total' : '') + (color ? ' ' + color : '');
+        scheduleSave();
+      });
+      colorBtns.appendChild(btn);
+    });
+
+    cell.appendChild(textarea); cell.appendChild(colorBtns);
+    row.appendChild(cell); container.appendChild(row);
   }
 
   function buildUI() {
     grid.style.display = 'flex';
     loadingMsg.style.display = 'none';
-
-    days.forEach((day, i) => {
-      const key = 'day-' + i;
-      if (!state[key]) state[key] = { color: '', text: '' };
-
-      const row = document.createElement('div'); row.className = 'day-row';
-
-      const header = document.createElement('div'); header.className = 'day-header';
-      header.textContent = day;
-      row.appendChild(header);
-
-      const cell = document.createElement('div');
-      cell.className = 'day-cell' + (state[key].color ? ' ' + state[key].color : '');
-
-      const textarea = document.createElement('textarea');
-      textarea.className = 'cell-textarea';
-      textarea.placeholder = '...';
-      textarea.value = state[key].text || '';
-      textarea.addEventListener('input', () => {
-        state[key].text = textarea.value;
-        scheduleSave();
-      });
-
-      const colorBtns = document.createElement('div'); colorBtns.className = 'color-btns';
-
-      // 🟢 Vert / 🔴 Rouge / ⬜ Gris / ✕ Effacer
-      [
-        ['green', '🟢', 'btn-green'],
-        ['red',   '🔴', 'btn-red'],
-        ['gray',  '⬜', 'btn-gray'],
-        ['',      '✕',  'btn-clear']
-      ].forEach(([color, label, cls]) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-color ' + cls;
-        btn.textContent = label;
-        btn.addEventListener('click', () => {
-          state[key].color = color;
-          cell.className = 'day-cell' + (color ? ' ' + color : '');
-          scheduleSave();
-        });
-        colorBtns.appendChild(btn);
-      });
-
-      cell.appendChild(textarea);
-      cell.appendChild(colorBtns);
-      row.appendChild(cell);
-      grid.appendChild(row);
-    });
+    days.forEach((day, i) => buildRow(day, 'day-' + i, grid, false));
+    buildRow('TOTAL', 'total', grid, true);
   }
 
   fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
