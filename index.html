@@ -194,7 +194,9 @@
 
   async function load() {
     try {
-      const res = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now(), { cache: 'no-store' });
+      const url = 'https://api.npoint.io/' + BIN_ID + '?t=' + Date.now() + '&r=' + Math.random();
+      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } });
+      if (!res.ok) return;
       const data = await res.json();
       let sum = 0;
       days.forEach((_, i) => {
@@ -234,7 +236,7 @@
   }
 
   load();
-  setInterval(load, 2000);
+  setInterval(load, 1500);
 </script>
 </body>
 </html>

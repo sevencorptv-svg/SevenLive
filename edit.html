@@ -174,7 +174,7 @@
 
   async function saveData() {
     try {
-      await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state) });
+      await fetch(API + '?t=' + Date.now(), { method: 'POST', headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' }, body: JSON.stringify(state) });
       savedMsg.classList.add('show');
       clearTimeout(savedMsg._t);
       savedMsg._t = setTimeout(() => savedMsg.classList.remove('show'), 1500);
@@ -191,7 +191,7 @@
     });
   }
 
-  function scheduleSave() { autoColorCells(); updateTotal(); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
+  function scheduleSave() { autoColorCells(); updateTotal(); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 400); }
 
   function buildUI() {
     grid.style.display = 'grid';
@@ -243,7 +243,10 @@
 
 
 
-  fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
+  fetch(API + '?t=' + Date.now() + '&r=' + Math.random(), { 
+    cache: 'no-store',
+    headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+  })
     .then(r => r.json())
     .then(d => { state = d || {}; buildUI(); })
     .catch(() => { loadingMsg.textContent = '❌ Erreur de connexion.'; });
