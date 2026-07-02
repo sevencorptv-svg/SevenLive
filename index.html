@@ -58,6 +58,19 @@
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     text-shadow: 0 1px 6px rgba(0,0,0,1); word-break: break-word;
   }
+  .enjeu-section {
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .enjeu-text {
+    font-family: Impact, Arial Black;
+    font-size: 13px; color: rgba(255,255,255,0.85);
+    text-align: center; text-transform: uppercase;
+    letter-spacing: 1.5px; line-height: 1.4;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+  }
   .total-section {
     display: flex; flex-direction: column; gap: 5px;
     padding-top: 8px; border-top: 2px solid rgba(255,255,255,0.12);
@@ -90,6 +103,9 @@
 <div class="overlay-wrapper">
   <div class="top-title">Score de la semaine</div>
   <div class="grid-2col" id="calGrid"></div>
+  <div class="enjeu-section">
+    <div class="enjeu-text" id="enjeuText">MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS</div>
+  </div>
   <div class="total-section">
     <div class="total-label">— Total —</div>
     <div class="total-score-cell" id="totalScoreCell">
@@ -186,6 +202,8 @@
       document.getElementById('totalScoreText').textContent = sum;
       document.getElementById('mvpGreenText').textContent = topMvp(mvpG);
       document.getElementById('mvpRedText').textContent   = topMvp(mvpR);
+      const enjeu = data['enjeu'] || {};
+      if (enjeu.text) document.getElementById('enjeuText').textContent = enjeu.text.toUpperCase();
     } catch(e) {}
   }
 

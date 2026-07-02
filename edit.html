@@ -62,6 +62,12 @@
     </div>
   </div>
 </div>
+<div class="enjeu-section" id="enjeuSection" style="display:none;width:100%;max-width:700px;margin-top:6px;">
+  <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:4px;">
+    <span style="font-family:Arial Black;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);text-transform:uppercase;text-align:center;">Phrase de l'enjeu</span>
+    <textarea id="enjeuTA" style="width:100%;height:36px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;font-family:Impact,Arial Black;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;resize:none;outline:none;text-align:center;"></textarea>
+  </div>
+</div>
 <div class="saved" id="savedMsg">✅ Sauvegardé !</div>
 
 <script>
@@ -177,6 +183,13 @@
     });
 
     updateTotal();
+
+    // Enjeu
+    document.getElementById('enjeuSection').style.display = 'block';
+    if (!state['enjeu']) state['enjeu'] = { text: "MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS" };
+    const enjeuTA = document.getElementById('enjeuTA');
+    enjeuTA.value = state['enjeu'].text || '';
+    enjeuTA.addEventListener('input', () => { state['enjeu'].text = enjeuTA.value; scheduleSave(); });
   }
 
   fetch(API + '?nocache=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
