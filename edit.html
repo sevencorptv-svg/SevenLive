@@ -115,10 +115,14 @@
   <div class="total-block">
     <div class="total-title">TOTAL (auto)</div>
     <div class="total-display" id="totalDisplay">0</div>
-    <div class="mvp-row">
-      <span class="row-label">MVP</span>
-      <div class="row-cell" id="totalMvpCell">
-        <div id="totalMvpDisplay" style="flex:1;text-align:center;font-family:Impact,Arial Black;font-size:13px;color:#fff;letter-spacing:1px;text-transform:uppercase;">...</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+      <div class="row-cell green" id="totalMvpGreenCell" style="flex-direction:column;gap:1px;padding:3px 5px;min-height:36px;">
+        <span style="font-size:8px;letter-spacing:1px;color:rgba(34,197,94,0.8);font-family:Arial Black;text-transform:uppercase;">⬡ Équipe Verte</span>
+        <div id="totalMvpGreenDisplay" style="font-family:Impact,Arial Black;font-size:12px;color:#fff;text-align:center;text-transform:uppercase;letter-spacing:1px;">...</div>
+      </div>
+      <div class="row-cell red" id="totalMvpRedCell" style="flex-direction:column;gap:1px;padding:3px 5px;min-height:36px;">
+        <span style="font-size:8px;letter-spacing:1px;color:rgba(239,68,68,0.8);font-family:Arial Black;text-transform:uppercase;">⬡ Équipe Rouge</span>
+        <div id="totalMvpRedDisplay" style="font-family:Impact,Arial Black;font-size:12px;color:#fff;text-align:center;text-transform:uppercase;letter-spacing:1px;">...</div>
       </div>
     </div>
   </div>
@@ -156,16 +160,24 @@
     state['total'] = { color, text: String(sum) };
     document.getElementById('totalMvpCell').className = 'row-cell ' + color;
 
-    // MVP auto : pseudo le plus fréquent
-    const mvpCount = {};
+    // MVP vert / rouge séparés
+    const mvpGreen = {}, mvpRed = {};
     days.forEach((_, i) => {
+      const color = state['day-' + i]?.color || '';
       const pseudo = (state['mvp-' + i]?.text || '').trim().toUpperCase();
-      if (pseudo) mvpCount[pseudo] = (mvpCount[pseudo] || 0) + 1;
+      if (!pseudo) return;
+      if (color === 'green') mvpGreen[pseudo] = (mvpGreen[pseudo] || 0) + 1;
+      if (color === 'red')   mvpRed[pseudo]   = (mvpRed[pseudo]   || 0) + 1;
     });
-    let topMvp = '', topCount = 0;
-    Object.entries(mvpCount).forEach(([p, c]) => { if (c > topCount) { topCount = c; topMvp = p; } });
-    const mvpDisplay = document.getElementById('totalMvpDisplay');
-    if (mvpDisplay) mvpDisplay.textContent = topMvp ? topMvp + (topCount > 1 ? ' ×' + topCount : '') : '...';
+    function topOf(obj) {
+      let top = '', cnt = 0;
+      Object.entries(obj).forEach(([p, c]) => { if (c > cnt) { cnt = c; top = p; } });
+      return top ? top + (cnt > 1 ? ' ×' + cnt : '') : '...';
+    }
+    const gd = document.getElementById('totalMvpGreenDisplay');
+    const rd = document.getElementById('totalMvpRedDisplay');
+    if (gd) gd.textContent = topOf(mvpGreen);
+    if (rd) rd.textContent = topOf(mvpRed);
   }
 
   async function saveData() {
