@@ -200,9 +200,12 @@
       days.forEach((_, i) => {
         const d = data['day-' + i] || {};
         const m = data['mvp-' + i] || {};
-        cells[i].scoreCell.className = 'score-cell' + (d.color ? ' ' + d.color : '');
+        const autoColor = d.text !== '' && d.text !== undefined
+          ? (extractNumber(d.text) > 0 ? 'green' : 'red')
+          : '';
+        cells[i].scoreCell.className = 'score-cell' + (autoColor ? ' ' + autoColor : '');
         cells[i].scoreText.textContent = (d.text || '').toUpperCase();
-        mvpCells[i].mvpCell.className = 'mvp-cell' + (d.color ? ' ' + d.color : '');
+        mvpCells[i].mvpCell.className = 'mvp-cell' + (autoColor ? ' ' + autoColor : '');
         mvpCells[i].mvpText.textContent = (m.text || '').toUpperCase();
         sum += extractNumber(d.text);
       });
@@ -215,8 +218,10 @@
         const d = data['day-' + i] || {};
         const pseudo = (data['mvp-' + i]?.text || '').trim().toUpperCase();
         if (!pseudo) return;
-        if (d.color === 'green') mvpGreen[pseudo] = (mvpGreen[pseudo] || 0) + 1;
-        if (d.color === 'red')   mvpRed[pseudo]   = (mvpRed[pseudo]   || 0) + 1;
+        const dc = data['day-' + i]?.text;
+        const ac = dc !== '' && dc !== undefined ? (extractNumber(dc) > 0 ? 'green' : 'red') : '';
+        if (ac === 'green') mvpGreen[pseudo] = (mvpGreen[pseudo] || 0) + 1;
+        if (ac === 'red')   mvpRed[pseudo]   = (mvpRed[pseudo]   || 0) + 1;
       });
       function topOf(obj) {
         let top = '', cnt = 0;

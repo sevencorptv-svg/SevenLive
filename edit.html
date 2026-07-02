@@ -60,17 +60,8 @@
     text-transform: uppercase; padding: 2px; resize: none; outline: none; text-align: center;
   }
   .cell-textarea:focus { border-color: rgba(255,255,255,0.35); }
-  .color-btns { display: flex; flex-direction: row; gap: 2px; }
-  .btn-color {
-    width: 18px; height: 18px; border: none; border-radius: 3px;
-    cursor: pointer; font-size: 9px; font-weight: 700;
-    transition: transform 0.15s; display: flex; align-items: center; justify-content: center;
-  }
-  .btn-color:hover { transform: scale(1.2); }
-  .btn-green { background: #22c55e; }
   .btn-red   { background: #ef4444; }
   .btn-gray  { background: #9ca3af; }
-  .btn-clear { background: rgba(255,255,255,0.15); color: #fff; font-size: 9px; border: 1px solid rgba(255,255,255,0.2); }
 
   /* TOTAL */
   .total-section {
@@ -160,10 +151,11 @@
     state['total'] = { color, text: String(sum) };
     document.getElementById('totalMvpCell').className = 'row-cell ' + color;
 
-    // MVP vert / rouge séparés
+    // MVP vert / rouge séparés (couleur auto selon score)
     const mvpGreen = {}, mvpRed = {};
     days.forEach((_, i) => {
-      const color = state['day-' + i]?.color || '';
+      const txt = state['day-' + i]?.text || '';
+      const color = txt !== '' ? (extractNumber(txt) > 0 ? 'green' : 'red') : '';
       const pseudo = (state['mvp-' + i]?.text || '').trim().toUpperCase();
       if (!pseudo) return;
       if (color === 'green') mvpGreen[pseudo] = (mvpGreen[pseudo] || 0) + 1;
@@ -189,7 +181,17 @@
     } catch(e) {}
   }
 
-  function scheduleSave() { updateTotal(); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
+  function autoColorCells() {
+    days.forEach((_, i) => {
+      const txt = state['day-' + i]?.text || '';
+      const color = txt !== '' ? (extractNumber(txt) > 0 ? 'green' : 'red') : '';
+      state['day-' + i].color = color;
+      if (scoreRefs[i]) scoreRefs[i].className = 'row-cell' + (color ? ' ' + color : '');
+      if (mvpRefs[i])   mvpRefs[i].className   = 'row-cell' + (color ? ' ' + color : '');
+    });
+  }
+
+  function scheduleSave() { autoColorCells(); updateTotal(); clearTimeout(saveTimeout); saveTimeout = setTimeout(saveData, 600); }
 
   function buildUI() {
     grid.style.display = 'grid';
@@ -214,8 +216,7 @@
       const scoreTA = document.createElement('textarea'); scoreTA.className = 'cell-textarea';
       scoreTA.placeholder = '0'; scoreTA.value = state[key].text || '';
       scoreTA.addEventListener('input', () => { state[key].text = scoreTA.value; scheduleSave(); });
-      const scoreBtns = buildColorBtns(key, scoreCell);
-      scoreCell.appendChild(scoreTA); scoreCell.appendChild(scoreBtns);
+      scoreCell.appendChild(scoreTA);
       scoreRow.appendChild(scoreLabel); scoreRow.appendChild(scoreCell);
       block.appendChild(scoreRow);
 
@@ -240,22 +241,7 @@
     updateTotal();
   }
 
-  function buildColorBtns(key, cell) {
-    const div = document.createElement('div'); div.className = 'color-btns';
-    [['green','🟢','btn-green'],['red','🔴','btn-red'],['gray','⬜','btn-gray'],['','✕','btn-clear']].forEach(([color, lbl, cls]) => {
-      const btn = document.createElement('button'); btn.className = 'btn-color ' + cls; btn.textContent = lbl;
-      btn.addEventListener('click', () => {
-        state[key].color = color;
-        cell.className = 'row-cell' + (color ? ' ' + color : '');
-        // sync mvp cell color
-        const i = parseInt(key.split('-')[1]);
-        if (mvpRefs[i]) mvpRefs[i].className = 'row-cell' + (color ? ' ' + color : '');
-        scheduleSave();
-      });
-      div.appendChild(btn);
-    });
-    return div;
-  }
+
 
   fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
     .then(r => r.json())
