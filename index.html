@@ -7,132 +7,83 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     min-height: 100vh;
     font-family: Impact, Arial Black, sans-serif;
   }
-
   .overlay-wrapper {
     margin: 16px;
-    background: rgba(0, 0, 0, 0.93);
+    background: rgba(0,0,0,0.93);
     border-radius: 20px;
     border: 2px solid rgba(255,255,255,0.18);
     box-shadow: 0 4px 32px rgba(0,0,0,0.8);
     padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: flex; flex-direction: column; gap: 8px;
     min-width: 300px;
   }
-
   .top-title {
-    font-family: Impact, Arial Black;
-    font-size: 13px;
-    letter-spacing: 5px;
-    color: rgba(255,255,255,0.5);
-    text-transform: uppercase;
-    text-align: center;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
-  }
-
-  .grid-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .day-block { display: flex; flex-direction: column; gap: 4px; }
-
-  .day-label {
-    font-family: Impact, Arial Black;
-    font-size: 13px; letter-spacing: 3px;
-    color: #fff;
+    font-size: 13px; letter-spacing: 5px; color: rgba(255,255,255,0.5);
     text-transform: uppercase; text-align: center;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.12);
   }
-
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .day-block { display: flex; flex-direction: column; gap: 4px; }
+  .day-label { font-size: 13px; letter-spacing: 3px; color: #fff; text-transform: uppercase; text-align: center; }
   .score-cell {
     height: 56px; border-radius: 12px;
-    background: rgba(255,255,255,0.07);
-    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.15);
     display: flex; align-items: center; justify-content: center;
-    padding: 6px 10px; overflow: hidden; transition: all 0.4s ease;
+    padding: 6px 10px; overflow: hidden; transition: all 0.4s;
   }
   .mvp-cell {
     height: 32px; border-radius: 8px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
     display: flex; align-items: center; justify-content: center;
-    gap: 5px; padding: 3px 8px; overflow: hidden; transition: all 0.4s ease;
+    gap: 5px; padding: 3px 8px; overflow: hidden; transition: all 0.4s;
   }
-
-  .score-cell.green { background: rgba(34,197,94,0.3);   border-color: #22c55e; box-shadow: 0 0 14px rgba(34,197,94,0.4); }
-  .score-cell.red   { background: rgba(239,68,68,0.3);   border-color: #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.4); }
-  .score-cell.gray  { background: rgba(120,128,140,0.4); border-color: #9ca3af; box-shadow: 0 0 14px rgba(120,128,140,0.3); }
-
-  .mvp-cell.green { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.4); }
-  .mvp-cell.red   { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.4); }
-  .mvp-cell.gray  { background: rgba(120,128,140,0.2); border-color: rgba(156,163,175,0.5); }
-
+  .score-cell.green { background: rgba(34,197,94,0.3);  border-color: #22c55e; box-shadow: 0 0 14px rgba(34,197,94,0.4); }
+  .score-cell.red   { background: rgba(239,68,68,0.3);  border-color: #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.4); }
+  .mvp-cell.green   { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); }
+  .mvp-cell.red     { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); }
   .cell-text {
-    font-family: Impact, Arial Black;
     font-size: 20px; color: #fff; text-align: center; text-transform: uppercase;
     letter-spacing: 1px; line-height: 1.2; overflow: hidden; max-width: 100%;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     text-shadow: 0 2px 8px rgba(0,0,0,1); word-break: break-word;
   }
-  .mvp-label {
-    font-family: Arial Black;
-    font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4);
-    text-transform: uppercase; flex-shrink: 0;
-  }
+  .mvp-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; flex-shrink: 0; }
   .mvp-text {
-    font-family: Impact, Arial Black;
     font-size: 13px; color: #fff; text-align: center; text-transform: uppercase;
     letter-spacing: 0.5px; line-height: 1.2; overflow: hidden; max-width: 100%;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     text-shadow: 0 1px 6px rgba(0,0,0,1); word-break: break-word;
   }
-
   .total-section {
     display: flex; flex-direction: column; gap: 5px;
-    padding-top: 8px;
-    border-top: 2px solid rgba(255,255,255,0.12);
+    padding-top: 8px; border-top: 2px solid rgba(255,255,255,0.12);
   }
-  .total-label {
-    font-family: Impact, Arial Black;
-    font-size: 12px; letter-spacing: 5px; color: rgba(255,255,255,0.5);
-    text-transform: uppercase; text-align: center;
-  }
+  .total-label { font-size: 12px; letter-spacing: 5px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: center; }
   .total-score-cell {
     height: 58px; border-radius: 12px;
-    background: rgba(255,255,255,0.08);
-    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2);
     display: flex; align-items: center; justify-content: center;
-    padding: 6px 14px; overflow: hidden; transition: all 0.4s ease;
+    padding: 6px 14px; overflow: hidden; transition: all 0.4s;
   }
-  .total-score-cell.green { background: rgba(34,197,94,0.3);   border-color: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-  .total-score-cell.red   { background: rgba(239,68,68,0.3);   border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); }
-  .total-score-cell.gray  { background: rgba(120,128,140,0.4); border-color: #9ca3af; }
-  .total-text {
-    font-family: Impact, Arial Black;
-    font-size: 28px; color: #fff; text-align: center;
-    letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,1);
-    overflow: hidden; max-width: 100%;
-    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
-  }
+  .total-score-cell.green { background: rgba(34,197,94,0.3);  border-color: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
+  .total-score-cell.red   { background: rgba(239,68,68,0.3);  border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); }
+  .total-text { font-size: 28px; color: #fff; text-align: center; letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,1); }
+  .mvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .total-mvp-cell {
     height: 46px; border-radius: 8px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 4px 10px; overflow: hidden; transition: all 0.4s ease;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 4px 8px; overflow: hidden; transition: all 0.4s;
   }
-  .total-mvp-cell.green { background: rgba(34,197,94,0.12);  border-color: rgba(34,197,94,0.4); }
-  .total-mvp-cell.red   { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.4); }
-  .total-mvp-cell.gray  { background: rgba(120,128,140,0.2); border-color: rgba(156,163,175,0.5); }
+  .total-mvp-cell.green { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); }
+  .total-mvp-cell.red   { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); }
+  .team-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
+  .team-label.green { color: rgba(34,197,94,0.8); }
+  .team-label.red   { color: rgba(239,68,68,0.8); }
 </style>
 </head>
 <body>
@@ -144,18 +95,14 @@
     <div class="total-score-cell" id="totalScoreCell">
       <div class="total-text" id="totalScoreText"></div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-      <div class="total-mvp-cell green" id="totalMvpGreenCell">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;width:100%">
-          <span class="mvp-label" style="color:rgba(34,197,94,0.7);">⬡ ÉQUIPE VERTE</span>
-          <div class="mvp-text" id="totalMvpGreenText"></div>
-        </div>
+    <div class="mvp-grid">
+      <div class="total-mvp-cell green" id="mvpGreenCell">
+        <span class="team-label green">⬡ Équipe Verte</span>
+        <div class="mvp-text" id="mvpGreenText"></div>
       </div>
-      <div class="total-mvp-cell red" id="totalMvpRedCell">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:1px;width:100%">
-          <span class="mvp-label" style="color:rgba(239,68,68,0.7);">⬡ ÉQUIPE ROUGE</span>
-          <div class="mvp-text" id="totalMvpRedText"></div>
-        </div>
+      <div class="total-mvp-cell red" id="mvpRedCell">
+        <span class="team-label red">⬡ Équipe Rouge</span>
+        <div class="mvp-text" id="mvpRedText"></div>
       </div>
     </div>
   </div>
@@ -163,80 +110,87 @@
 
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
-  const days = ['LUN','MAR','MER','JEU','VEN','SAM'];
-  const order = [0,3,1,4,2,5];
+  const DAYS = ['LUN','MAR','MER','JEU','VEN','SAM'];
+  const ORDER = [0,3,1,4,2,5];
   const grid = document.getElementById('calGrid');
-  const cells = new Array(6);
-  const mvpCells = new Array(6);
+  const scoreCells = {}, scoreTexts = {}, mvpCells = {}, mvpTexts = {};
 
-  order.forEach(i => {
+  ORDER.forEach(i => {
     const block = document.createElement('div'); block.className = 'day-block';
-    const label = document.createElement('div'); label.className = 'day-label'; label.textContent = days[i];
-    block.appendChild(label);
-    const scoreCell = document.createElement('div'); scoreCell.className = 'score-cell';
-    const scoreText = document.createElement('div'); scoreText.className = 'cell-text';
-    scoreCell.appendChild(scoreText); block.appendChild(scoreCell);
-    const mvpCell = document.createElement('div'); mvpCell.className = 'mvp-cell';
-    const mvpLabel = document.createElement('span'); mvpLabel.className = 'mvp-label'; mvpLabel.textContent = 'MVP';
-    const mvpText = document.createElement('div'); mvpText.className = 'mvp-text';
-    mvpCell.appendChild(mvpLabel); mvpCell.appendChild(mvpText);
-    block.appendChild(mvpCell);
+    const lbl = document.createElement('div'); lbl.className = 'day-label'; lbl.textContent = DAYS[i];
+    block.appendChild(lbl);
+    const sc = document.createElement('div'); sc.className = 'score-cell';
+    const st = document.createElement('div'); st.className = 'cell-text';
+    sc.appendChild(st); block.appendChild(sc);
+    const mc = document.createElement('div'); mc.className = 'mvp-cell';
+    const ml = document.createElement('span'); ml.className = 'mvp-label'; ml.textContent = 'MVP';
+    const mt = document.createElement('div'); mt.className = 'mvp-text';
+    mc.appendChild(ml); mc.appendChild(mt); block.appendChild(mc);
     grid.appendChild(block);
-    cells[i] = { scoreCell, scoreText };
-    mvpCells[i] = { mvpCell, mvpText };
+    scoreCells[i] = sc; scoreTexts[i] = st; mvpCells[i] = mc; mvpTexts[i] = mt;
   });
 
-  function extractNumber(str) {
-    if (!str) return 0;
-    const match = str.replace(',', '.').match(/-?\d+(\.\d+)?/);
-    return match ? parseFloat(match[0]) : 0;
+  function getNum(str) {
+    if (!str && str !== 0) return null;
+    const s = String(str).replace(',', '.').trim();
+    if (s === '') return null;
+    const m = s.match(/-?\d+(\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  function getColor(text) {
+    const n = getNum(text);
+    if (n === null) return '';
+    return n > 0 ? 'green' : 'red';
+  }
+
+  function topMvp(map) {
+    let top = '', cnt = 0;
+    Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
+    return top ? top + (cnt > 1 ? ' ×' + cnt : '') : '';
   }
 
   async function load() {
     try {
-      const url = 'https://api.npoint.io/' + BIN_ID + '?t=' + Date.now() + '&r=' + Math.random();
-      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } });
-      if (!res.ok) return;
-      const data = await res.json();
+      const r = await fetch('https://api.npoint.io/' + BIN_ID + '?nocache=' + Date.now() + '_' + Math.random(), {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }
+      });
+      if (!r.ok) return;
+      const data = await r.json();
+
       let sum = 0;
-      days.forEach((_, i) => {
+      const mvpG = {}, mvpR = {};
+
+      DAYS.forEach((_, i) => {
         const d = data['day-' + i] || {};
         const m = data['mvp-' + i] || {};
-        const autoColor = d.text !== '' && d.text !== undefined
-          ? (extractNumber(d.text) > 0 ? 'green' : 'red')
-          : '';
-        cells[i].scoreCell.className = 'score-cell' + (autoColor ? ' ' + autoColor : '');
-        cells[i].scoreText.textContent = (d.text || '').toUpperCase();
-        mvpCells[i].mvpCell.className = 'mvp-cell' + (autoColor ? ' ' + autoColor : '');
-        mvpCells[i].mvpText.textContent = (m.text || '').toUpperCase();
-        sum += extractNumber(d.text);
+        const color = getColor(d.text);
+        const num = getNum(d.text);
+        if (num !== null) sum += num;
+
+        scoreCells[i].className = 'score-cell' + (color ? ' ' + color : '');
+        scoreTexts[i].textContent = (d.text || '').toString().toUpperCase();
+        mvpCells[i].className = 'mvp-cell' + (color ? ' ' + color : '');
+        mvpTexts[i].textContent = (m.text || '').toUpperCase();
+
+        const pseudo = (m.text || '').trim().toUpperCase();
+        if (pseudo) {
+          if (color === 'green') mvpG[pseudo] = (mvpG[pseudo] || 0) + 1;
+          if (color === 'red')   mvpR[pseudo] = (mvpR[pseudo] || 0) + 1;
+        }
       });
-      const totalColor = sum > 0 ? 'green' : sum < 0 ? 'red' : 'gray';
+
+      const totalColor = sum > 0 ? 'green' : 'red';
       document.getElementById('totalScoreCell').className = 'total-score-cell ' + totalColor;
       document.getElementById('totalScoreText').textContent = sum;
-      // MVP vert = pseudos des jours verts / MVP rouge = pseudos des jours rouges
-      const mvpGreen = {}, mvpRed = {};
-      days.forEach((_, i) => {
-        const d = data['day-' + i] || {};
-        const pseudo = (data['mvp-' + i]?.text || '').trim().toUpperCase();
-        if (!pseudo) return;
-        const dc = data['day-' + i]?.text;
-        const ac = dc !== '' && dc !== undefined ? (extractNumber(dc) > 0 ? 'green' : 'red') : '';
-        if (ac === 'green') mvpGreen[pseudo] = (mvpGreen[pseudo] || 0) + 1;
-        if (ac === 'red')   mvpRed[pseudo]   = (mvpRed[pseudo]   || 0) + 1;
-      });
-      function topOf(obj) {
-        let top = '', cnt = 0;
-        Object.entries(obj).forEach(([p, c]) => { if (c > cnt) { cnt = c; top = p; } });
-        return top ? top + (cnt > 1 ? ' ×' + cnt : '') : '';
-      }
-      document.getElementById('totalMvpGreenText').textContent = topOf(mvpGreen);
-      document.getElementById('totalMvpRedText').textContent   = topOf(mvpRed);
+      document.getElementById('mvpGreenText').textContent = topMvp(mvpG);
+      document.getElementById('mvpRedText').textContent   = topMvp(mvpR);
     } catch(e) {}
   }
 
   load();
-  setInterval(load, 1500);
+  setInterval(load, 2000);
 </script>
 </body>
 </html>
