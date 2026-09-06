@@ -7,8 +7,8 @@
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html {
-    width: 1080px;
-    height: 1920px;
+    width: 1920px;
+    height: 1080px;
   }
   body {
     background: transparent;
@@ -44,7 +44,7 @@
   /* JOURS - ligne horizontale */
   .days-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
   .day-block { display: flex; flex-direction: column; gap: 3px; }
@@ -225,7 +225,7 @@
   const scoreCells = {}, scoreTexts = {}, mvpCells = {}, mvpTexts = {};
 
   // Ordre : LUN MAR MER / JEU VEN SAM
-  const ORDER = [0,1,2,3,4,5];
+  const ORDER = [0,3,1,4,2,5];
   ORDER.forEach((i) => {
     const day = DAYS[i];
     const block = document.createElement('div'); block.className = 'day-block';
