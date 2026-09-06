@@ -2,181 +2,182 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Overlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html {
-    width: 1080px;
-    height: 1920px;
-  }
   body {
     background: transparent;
-    display: flex; align-items: center; justify-content: center;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
   .overlay-wrapper {
-    margin: 12px;
-    background: linear-gradient(160deg, rgba(10,10,18,0.96) 0%, rgba(5,5,12,0.98) 100%);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07);
-    padding: 12px;
-    display: flex; flex-direction: column; gap: 8px;
-    width: 100%;
+    background: rgba(0,0,0,0.95);
+    border-radius: 18px;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    box-shadow: 0 10px 50px rgba(0,0,0,0.9);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 420px;
   }
 
   /* HEADER */
   .top-header {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  .top-header .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15)); }
-  .top-header .line.right { background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent); }
+  .top-header .line { flex: 1; height: 1px; }
+  .top-header .line.l { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2)); }
+  .top-header .line.r { background: linear-gradient(90deg, rgba(255,255,255,0.2), transparent); }
   .top-title {
-    font-family: 'Bebas Neue', Impact, sans-serif;
-    font-size: 12px; letter-spacing: 6px; color: rgba(255,255,255,0.4);
-    text-transform: uppercase;
+    font-size: 13px; letter-spacing: 5px;
+    color: rgba(255,255,255,0.4); text-transform: uppercase;
   }
 
-  /* JOURS - ligne horizontale */
-  .days-row {
+  /* GRID 2 colonnes */
+  .days-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
-  .day-block { display: flex; flex-direction: column; gap: 3px; }
+
+  .day-block { display: flex; flex-direction: column; gap: 5px; }
+
   .day-label {
-    font-family: 'Bebas Neue', Impact, sans-serif;
-    font-size: 12px; letter-spacing: 3px; color: rgba(255,255,255,0.5);
+    font-size: 13px; letter-spacing: 4px;
+    color: rgba(255,255,255,0.5);
     text-transform: uppercase; text-align: center;
   }
+
   .score-cell {
-    height: 44px; border-radius: 8px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex; align-items: center; justify-content: center;
-    padding: 4px 6px; overflow: hidden; transition: all 0.4s ease;
-    position: relative;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 8px 6px;
+    gap: 4px;
+    overflow: hidden;
+    transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
   }
-  .score-cell::before {
-    content: ''; position: absolute; inset: 0; border-radius: 8px;
-    background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, transparent 60%);
-    pointer-events: none;
+  .score-cell.green {
+    background: rgba(34,197,94,0.2);
+    border-color: rgba(34,197,94,0.7);
+    box-shadow: 0 0 18px rgba(34,197,94,0.2);
   }
-  .mvp-cell {
-    height: 22px; border-radius: 5px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
-    display: flex; align-items: center; justify-content: center;
-    gap: 3px; padding: 1px 5px; overflow: hidden; transition: all 0.4s ease;
+  .score-cell.red {
+    background: rgba(239,68,68,0.2);
+    border-color: rgba(239,68,68,0.7);
+    box-shadow: 0 0 18px rgba(239,68,68,0.2);
   }
-  .score-cell.green { background: rgba(34,197,94,0.22);  border-color: rgba(34,197,94,0.55); box-shadow: 0 0 12px rgba(34,197,94,0.2); }
-  .score-cell.red   { background: rgba(239,68,68,0.22);  border-color: rgba(239,68,68,0.55); box-shadow: 0 0 12px rgba(239,68,68,0.2); }
-  .mvp-cell.green   { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.25); }
-  .mvp-cell.red     { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25); }
-  .cell-text {
-    font-family: 'Bebas Neue', Impact, sans-serif;
-    font-size: 18px; color: #fff; text-align: center; text-transform: uppercase;
-    letter-spacing: 1px; line-height: 1.1; overflow: hidden; max-width: 100%;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    text-shadow: 0 2px 8px rgba(0,0,0,1); word-break: break-word;
+
+  .score-number {
+    font-size: 30px; color: #fff;
+    letter-spacing: 2px; line-height: 1;
+    text-shadow: 0 2px 10px rgba(0,0,0,1);
+    overflow: hidden; max-width: 100%; text-align: center;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+    word-break: break-all;
   }
-  .mvp-label {
+
+  .mvp-row {
+    display: flex; align-items: center; gap: 4px;
+    width: 100%;
+  }
+  .mvp-badge {
     font-family: 'Rajdhani', Arial, sans-serif;
-    font-size: 7px; letter-spacing: 1px; color: rgba(255,255,255,0.25);
-    text-transform: uppercase; flex-shrink: 0; font-weight: 700;
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.35); text-transform: uppercase;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 3px; padding: 1px 3px;
   }
-  .mvp-text {
+  .mvp-name {
     font-family: 'Rajdhani', Arial, sans-serif;
-    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8);
-    text-align: center; text-transform: uppercase; letter-spacing: 0.5px;
-    overflow: hidden; max-width: 100%;
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.85); text-transform: uppercase;
+    letter-spacing: 0.5px; overflow: hidden; flex: 1; text-align: center;
     display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
     word-break: break-word;
   }
 
   /* SEPARATEUR */
-  .separator { display: flex; align-items: center; gap: 8px; }
-  .separator .line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
-  .separator .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-
-  /* BOTTOM ROW : total + mvps + enjeu */
-  .bottom-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    align-items: center;
+  .sep {
+    display: flex; align-items: center; gap: 6px;
   }
+  .sep .l { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+  .sep .d { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+
+  /* BOTTOM */
+  .bottom-section { display: flex; flex-direction: column; gap: 8px; }
 
   /* TOTAL */
-  .total-block { display: flex; flex-direction: column; gap: 3px; align-items: center; }
-  .total-lbl {
-    font-family: 'Bebas Neue', Impact, sans-serif;
-    font-size: 9px; letter-spacing: 4px; color: rgba(255,255,255,0.3);
-    text-transform: uppercase; text-align: center;
+  .total-cell {
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 10px 14px; gap: 2px;
+    transition: all 0.4s;
   }
-  .total-score-cell {
-    width: 100%; height: 48px; border-radius: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; transition: all 0.4s ease; position: relative;
-  }
-  .total-score-cell::before {
-    content: ''; position: absolute; inset: 0; border-radius: 10px;
-    background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .total-score-cell.green { background: rgba(34,197,94,0.22); border-color: rgba(34,197,94,0.6); box-shadow: 0 0 18px rgba(34,197,94,0.25); }
-  .total-score-cell.red   { background: rgba(239,68,68,0.22);  border-color: rgba(239,68,68,0.6); box-shadow: 0 0 18px rgba(239,68,68,0.25); }
-  .total-text {
-    font-family: 'Bebas Neue', Impact, sans-serif;
-    font-size: 26px; color: #fff; text-align: center;
-    letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,1);
-  }
+  .total-cell.green { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.7); box-shadow: 0 0 22px rgba(34,197,94,0.25); }
+  .total-cell.red   { background: rgba(239,68,68,0.2);  border-color: rgba(239,68,68,0.7); box-shadow: 0 0 22px rgba(239,68,68,0.25); }
+  .total-lbl { font-size: 10px; letter-spacing: 5px; color: rgba(255,255,255,0.3); }
+  .total-num { font-size: 36px; color: #fff; letter-spacing: 3px; text-shadow: 0 2px 14px rgba(0,0,0,1); line-height: 1; }
 
-  /* MVP CELLS */
-  .total-mvp-cell {
-    height: 48px; border-radius: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px; padding: 4px 8px; overflow: hidden; transition: all 0.4s ease;
+  /* MVP EQUIPES */
+  .mvp-teams {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   }
-  .total-mvp-cell.green { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
-  .total-mvp-cell.red   { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.3); }
-  .team-label { font-family: 'Rajdhani', Arial, sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
-  .team-label.green { color: rgba(34,197,94,0.7); }
-  .team-label.red   { color: rgba(239,68,68,0.7); }
-  .team-mvp-text {
+  .team-cell {
+    border-radius: 10px; padding: 8px 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    transition: all 0.4s;
+  }
+  .team-cell.green { background: rgba(34,197,94,0.1); border: 1.5px solid rgba(34,197,94,0.35); }
+  .team-cell.red   { background: rgba(239,68,68,0.1);  border: 1.5px solid rgba(239,68,68,0.35); }
+  .team-lbl {
     font-family: 'Rajdhani', Arial, sans-serif;
-    font-size: 13px; font-weight: 700; color: #fff;
-    text-align: center; text-transform: uppercase; letter-spacing: 1px;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .team-lbl.green { color: rgba(34,197,94,0.8); }
+  .team-lbl.red   { color: rgba(239,68,68,0.8); }
+  .team-name {
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 15px; font-weight: 700; color: #fff;
+    text-transform: uppercase; letter-spacing: 1px; text-align: center;
     overflow: hidden; max-width: 100%;
     display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
     word-break: break-word;
   }
 
   /* ENJEU */
-  .enjeu-section {
-    height: 48px; border-radius: 10px;
+  .enjeu-cell {
+    border-radius: 10px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.08);
-    padding: 6px 12px;
-    display: flex; align-items: center; justify-content: center;
+    padding: 8px 14px;
     position: relative; overflow: hidden;
   }
-  .enjeu-section::before {
+  .enjeu-cell::before {
     content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-    background: linear-gradient(180deg, rgba(34,197,94,0.7), rgba(239,68,68,0.7));
+    background: linear-gradient(180deg, rgba(34,197,94,0.8), rgba(239,68,68,0.8));
   }
-  .enjeu-text {
+  .enjeu-txt {
     font-family: 'Rajdhani', Arial, sans-serif;
-    font-size: 11px; font-weight: 700;
-    color: rgba(255,255,255,0.65);
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.6);
     text-align: center; text-transform: uppercase;
     letter-spacing: 1px; line-height: 1.4;
   }
@@ -186,33 +187,32 @@
 <div class="overlay-wrapper">
 
   <div class="top-header">
-    <div class="line"></div>
+    <div class="line l"></div>
     <div class="top-title">Score de la semaine</div>
-    <div class="line right"></div>
+    <div class="line r"></div>
   </div>
 
-  <div class="days-row" id="calGrid"></div>
+  <div class="days-grid" id="calGrid"></div>
 
-  <div class="separator"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="sep"><div class="l"></div><div class="d"></div><div class="l"></div></div>
 
-  <div style="display:flex;flex-direction:column;gap:6px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-      <div class="total-mvp-cell green" id="mvpGreenCell">
-        <span class="team-label green">Equipe Verte</span>
-        <div class="team-mvp-text" id="mvpGreenText"></div>
+  <div class="bottom-section">
+    <div class="total-cell" id="totalCell">
+      <div class="total-lbl">TOTAL</div>
+      <div class="total-num" id="totalNum"></div>
+    </div>
+    <div class="mvp-teams">
+      <div class="team-cell green">
+        <span class="team-lbl green">Equipe Verte</span>
+        <div class="team-name" id="mvpGreen"></div>
       </div>
-      <div class="total-mvp-cell red" id="mvpRedCell">
-        <span class="team-label red">Equipe Rouge</span>
-        <div class="team-mvp-text" id="mvpRedText"></div>
+      <div class="team-cell red">
+        <span class="team-lbl red">Equipe Rouge</span>
+        <div class="team-name" id="mvpRed"></div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:100px 1fr;gap:6px;align-items:center;">
-      <div class="total-score-cell" id="totalScoreCell">
-        <div class="total-text" id="totalScoreText"></div>
-      </div>
-      <div class="enjeu-section">
-        <div class="enjeu-text" id="enjeuText">MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS</div>
-      </div>
+    <div class="enjeu-cell">
+      <div class="enjeu-txt" id="enjeuTxt">MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS</div>
     </div>
   </div>
 
@@ -221,50 +221,50 @@
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
   const DAYS = ['LUN','MAR','MER','JEU','VEN','SAM'];
-  const grid = document.getElementById('calGrid');
-  const scoreCells = {}, scoreTexts = {}, mvpCells = {}, mvpTexts = {};
-
-  // Ordre : LUN MAR MER / JEU VEN SAM
   const ORDER = [0,3,1,4,2,5];
-  ORDER.forEach((i) => {
-    const day = DAYS[i];
+  const grid = document.getElementById('calGrid');
+  const sCells = {}, sNums = {}, mNames = {};
+
+  ORDER.forEach(i => {
     const block = document.createElement('div'); block.className = 'day-block';
-    const lbl = document.createElement('div'); lbl.className = 'day-label'; lbl.textContent = day;
-    block.appendChild(lbl);
+
+    const lbl = document.createElement('div'); lbl.className = 'day-label';
+    lbl.textContent = DAYS[i]; block.appendChild(lbl);
+
     const sc = document.createElement('div'); sc.className = 'score-cell';
-    const st = document.createElement('div'); st.className = 'cell-text';
-    sc.appendChild(st); block.appendChild(sc);
-    const mc = document.createElement('div'); mc.className = 'mvp-cell';
-    const ml = document.createElement('span'); ml.className = 'mvp-label'; ml.textContent = 'MVP';
-    const mt = document.createElement('div'); mt.className = 'mvp-text';
-    mc.appendChild(ml); mc.appendChild(mt); block.appendChild(mc);
+    const sn = document.createElement('div'); sn.className = 'score-number';
+    const mr = document.createElement('div'); mr.className = 'mvp-row';
+    const mb = document.createElement('span'); mb.className = 'mvp-badge'; mb.textContent = 'MVP';
+    const mn = document.createElement('div'); mn.className = 'mvp-name';
+    mr.appendChild(mb); mr.appendChild(mn);
+    sc.appendChild(sn); sc.appendChild(mr);
+    block.appendChild(sc);
     grid.appendChild(block);
-    scoreCells[i] = sc; scoreTexts[i] = st; mvpCells[i] = mc; mvpTexts[i] = mt;
+
+    sCells[i] = sc; sNums[i] = sn; mNames[i] = mn;
   });
 
   function getNum(str) {
-    if (!str && str !== 0) return null;
-    const s = String(str).replace(',', '.').trim();
-    if (s === '') return null;
+    const s = String(str || '').replace(',', '.').trim();
+    if (!s) return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
   }
-  function getColor(text) {
-    const n = getNum(text);
+  function getColor(txt) {
+    const n = getNum(txt);
     if (n === null) return '';
     return n > 0 ? 'green' : 'red';
   }
-  function topMvp(map) {
+  function topOf(map) {
     let top = '', cnt = 0;
     Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
-    return top ? top + (cnt > 1 ? ' x' + cnt : '') : '';
+    return top ? top + (cnt > 1 ? ' x' + cnt : '') : '—';
   }
 
   async function load() {
     try {
-      const r = await fetch('https://api.npoint.io/' + BIN_ID + '?nocache=' + Date.now() + '_' + Math.random(), {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+      const r = await fetch('https://api.npoint.io/' + BIN_ID + '?t=' + Date.now() + '_' + Math.random(), {
+        cache: 'no-store', headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
       });
       if (!r.ok) return;
       const data = await r.json();
@@ -277,24 +277,23 @@
         const color = getColor(d.text);
         const num = getNum(d.text);
         if (num !== null) sum += num;
-        scoreCells[i].className = 'score-cell' + (color ? ' ' + color : '');
-        scoreTexts[i].textContent = (d.text || '').toString().toUpperCase();
-        mvpCells[i].className = 'mvp-cell' + (color ? ' ' + color : '');
-        mvpTexts[i].textContent = (m.text || '').toUpperCase();
-        const pseudo = (m.text || '').trim().toUpperCase();
-        if (pseudo) {
-          if (color === 'green') mvpG[pseudo] = (mvpG[pseudo] || 0) + 1;
-          if (color === 'red')   mvpR[pseudo] = (mvpR[pseudo] || 0) + 1;
+        sCells[i].className = 'score-cell' + (color ? ' ' + color : '');
+        sNums[i].textContent = d.text || '';
+        mNames[i].textContent = (m.text || '').toUpperCase();
+        const p = (m.text || '').trim().toUpperCase();
+        if (p) {
+          if (color === 'green') mvpG[p] = (mvpG[p] || 0) + 1;
+          if (color === 'red')   mvpR[p] = (mvpR[p] || 0) + 1;
         }
       });
 
-      const totalColor = sum > 0 ? 'green' : 'red';
-      document.getElementById('totalScoreCell').className = 'total-score-cell ' + totalColor;
-      document.getElementById('totalScoreText').textContent = sum;
-      document.getElementById('mvpGreenText').textContent = topMvp(mvpG);
-      document.getElementById('mvpRedText').textContent   = topMvp(mvpR);
+      const c = sum > 0 ? 'green' : 'red';
+      document.getElementById('totalCell').className = 'total-cell ' + c;
+      document.getElementById('totalNum').textContent = sum;
+      document.getElementById('mvpGreen').textContent = topOf(mvpG);
+      document.getElementById('mvpRed').textContent   = topOf(mvpR);
       const enjeu = data['enjeu'] || {};
-      if (enjeu.text) document.getElementById('enjeuText').textContent = enjeu.text.toUpperCase();
+      if (enjeu.text) document.getElementById('enjeuTxt').textContent = enjeu.text.toUpperCase();
     } catch(e) {}
   }
 
