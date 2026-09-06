@@ -4,136 +4,226 @@
 <meta charset="UTF-8">
 <title>Overlay</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: transparent;
     display: flex; align-items: center; justify-content: center;
     min-height: 100vh;
-    font-family: Impact, Arial Black, sans-serif;
   }
   .overlay-wrapper {
-    margin: 16px;
-    background: rgba(0,0,0,0.93);
-    border-radius: 20px;
-    border: 2px solid rgba(255,255,255,0.18);
-    box-shadow: 0 4px 32px rgba(0,0,0,0.8);
-    padding: 14px;
+    margin: 12px;
+    background: linear-gradient(160deg, rgba(10,10,18,0.96) 0%, rgba(5,5,12,0.98) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07);
+    padding: 12px;
     display: flex; flex-direction: column; gap: 8px;
-    min-width: 300px;
+    width: 100%;
   }
+
+  /* HEADER */
+  .top-header {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .top-header .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15)); }
+  .top-header .line.right { background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent); }
   .top-title {
-    font-size: 13px; letter-spacing: 5px; color: rgba(255,255,255,0.5);
-    text-transform: uppercase; text-align: center;
-    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.12);
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-size: 12px; letter-spacing: 6px; color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
   }
-  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .day-block { display: flex; flex-direction: column; gap: 4px; }
-  .day-label { font-size: 13px; letter-spacing: 3px; color: #fff; text-transform: uppercase; text-align: center; }
+
+  /* JOURS - ligne horizontale */
+  .days-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .day-block { display: flex; flex-direction: column; gap: 3px; }
+  .day-label {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-size: 12px; letter-spacing: 3px; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; text-align: center;
+  }
   .score-cell {
-    height: 56px; border-radius: 12px;
-    background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.15);
+    height: 44px; border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
     display: flex; align-items: center; justify-content: center;
-    padding: 6px 10px; overflow: hidden; transition: all 0.4s;
+    padding: 4px 6px; overflow: hidden; transition: all 0.4s ease;
+    position: relative;
+  }
+  .score-cell::before {
+    content: ''; position: absolute; inset: 0; border-radius: 8px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
   }
   .mvp-cell {
-    height: 32px; border-radius: 8px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    height: 22px; border-radius: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
     display: flex; align-items: center; justify-content: center;
-    gap: 5px; padding: 3px 8px; overflow: hidden; transition: all 0.4s;
+    gap: 3px; padding: 1px 5px; overflow: hidden; transition: all 0.4s ease;
   }
-  .score-cell.green { background: rgba(34,197,94,0.3);  border-color: #22c55e; box-shadow: 0 0 14px rgba(34,197,94,0.4); }
-  .score-cell.red   { background: rgba(239,68,68,0.3);  border-color: #ef4444; box-shadow: 0 0 14px rgba(239,68,68,0.4); }
-  .mvp-cell.green   { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); }
-  .mvp-cell.red     { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); }
+  .score-cell.green { background: rgba(34,197,94,0.22);  border-color: rgba(34,197,94,0.55); box-shadow: 0 0 12px rgba(34,197,94,0.2); }
+  .score-cell.red   { background: rgba(239,68,68,0.22);  border-color: rgba(239,68,68,0.55); box-shadow: 0 0 12px rgba(239,68,68,0.2); }
+  .mvp-cell.green   { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.25); }
+  .mvp-cell.red     { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.25); }
   .cell-text {
-    font-size: 20px; color: #fff; text-align: center; text-transform: uppercase;
-    letter-spacing: 1px; line-height: 1.2; overflow: hidden; max-width: 100%;
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-size: 18px; color: #fff; text-align: center; text-transform: uppercase;
+    letter-spacing: 1px; line-height: 1.1; overflow: hidden; max-width: 100%;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     text-shadow: 0 2px 8px rgba(0,0,0,1); word-break: break-word;
   }
-  .mvp-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; flex-shrink: 0; }
-  .mvp-text {
-    font-size: 13px; color: #fff; text-align: center; text-transform: uppercase;
-    letter-spacing: 0.5px; line-height: 1.2; overflow: hidden; max-width: 100%;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    text-shadow: 0 1px 6px rgba(0,0,0,1); word-break: break-word;
+  .mvp-label {
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 7px; letter-spacing: 1px; color: rgba(255,255,255,0.25);
+    text-transform: uppercase; flex-shrink: 0; font-weight: 700;
   }
+  .mvp-text {
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8);
+    text-align: center; text-transform: uppercase; letter-spacing: 0.5px;
+    overflow: hidden; max-width: 100%;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+    word-break: break-word;
+  }
+
+  /* SEPARATEUR */
+  .separator { display: flex; align-items: center; gap: 8px; }
+  .separator .line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+  .separator .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+
+  /* BOTTOM ROW : total + mvps + enjeu */
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* TOTAL */
+  .total-block { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+  .total-lbl {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-size: 9px; letter-spacing: 4px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; text-align: center;
+  }
+  .total-score-cell {
+    width: 100%; height: 48px; border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: all 0.4s ease; position: relative;
+  }
+  .total-score-cell::before {
+    content: ''; position: absolute; inset: 0; border-radius: 10px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .total-score-cell.green { background: rgba(34,197,94,0.22); border-color: rgba(34,197,94,0.6); box-shadow: 0 0 18px rgba(34,197,94,0.25); }
+  .total-score-cell.red   { background: rgba(239,68,68,0.22);  border-color: rgba(239,68,68,0.6); box-shadow: 0 0 18px rgba(239,68,68,0.25); }
+  .total-text {
+    font-family: 'Bebas Neue', Impact, sans-serif;
+    font-size: 26px; color: #fff; text-align: center;
+    letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,1);
+  }
+
+  /* MVP CELLS */
+  .total-mvp-cell {
+    height: 48px; border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 4px 8px; overflow: hidden; transition: all 0.4s ease;
+  }
+  .total-mvp-cell.green { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
+  .total-mvp-cell.red   { background: rgba(239,68,68,0.08);  border-color: rgba(239,68,68,0.3); }
+  .team-label { font-family: 'Rajdhani', Arial, sans-serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
+  .team-label.green { color: rgba(34,197,94,0.7); }
+  .team-label.red   { color: rgba(239,68,68,0.7); }
+  .team-mvp-text {
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 13px; font-weight: 700; color: #fff;
+    text-align: center; text-transform: uppercase; letter-spacing: 1px;
+    overflow: hidden; max-width: 100%;
+    display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+    word-break: break-word;
+  }
+
+  /* ENJEU */
   .enjeu-section {
-    padding: 6px 10px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1);
+    height: 48px; border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .enjeu-section::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, rgba(34,197,94,0.7), rgba(239,68,68,0.7));
   }
   .enjeu-text {
-    font-family: Impact, Arial Black;
-    font-size: 13px; color: rgba(255,255,255,0.85);
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: rgba(255,255,255,0.65);
     text-align: center; text-transform: uppercase;
-    letter-spacing: 1.5px; line-height: 1.4;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    letter-spacing: 1px; line-height: 1.4;
   }
-  .total-section {
-    display: flex; flex-direction: column; gap: 5px;
-    padding-top: 8px; border-top: 2px solid rgba(255,255,255,0.12);
-  }
-  .total-label { font-size: 12px; letter-spacing: 5px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: center; }
-  .total-score-cell {
-    height: 58px; border-radius: 12px;
-    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2);
-    display: flex; align-items: center; justify-content: center;
-    padding: 6px 14px; overflow: hidden; transition: all 0.4s;
-  }
-  .total-score-cell.green { background: rgba(34,197,94,0.3);  border-color: #22c55e; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-  .total-score-cell.red   { background: rgba(239,68,68,0.3);  border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.4); }
-  .total-text { font-size: 28px; color: #fff; text-align: center; letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0,0,0,1); }
-  .mvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .total-mvp-cell {
-    height: 46px; border-radius: 8px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px; padding: 4px 8px; overflow: hidden; transition: all 0.4s;
-  }
-  .total-mvp-cell.green { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); }
-  .total-mvp-cell.red   { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); }
-  .team-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
-  .team-label.green { color: rgba(34,197,94,0.8); }
-  .team-label.red   { color: rgba(239,68,68,0.8); }
 </style>
 </head>
 <body>
 <div class="overlay-wrapper">
-  <div class="top-title">Score de la semaine</div>
-  <div class="grid-2col" id="calGrid"></div>
-  <div class="enjeu-section">
-    <div class="enjeu-text" id="enjeuText">MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS</div>
+
+  <div class="top-header">
+    <div class="line"></div>
+    <div class="top-title">Score de la semaine</div>
+    <div class="line right"></div>
   </div>
-  <div class="total-section">
-    <div class="total-label">— Total —</div>
-    <div class="total-score-cell" id="totalScoreCell">
-      <div class="total-text" id="totalScoreText"></div>
-    </div>
-    <div class="mvp-grid">
+
+  <div class="days-row" id="calGrid"></div>
+
+  <div class="separator"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
       <div class="total-mvp-cell green" id="mvpGreenCell">
-        <span class="team-label green">⬡ Équipe Verte</span>
-        <div class="mvp-text" id="mvpGreenText"></div>
+        <span class="team-label green">Equipe Verte</span>
+        <div class="team-mvp-text" id="mvpGreenText"></div>
       </div>
       <div class="total-mvp-cell red" id="mvpRedCell">
-        <span class="team-label red">⬡ Équipe Rouge</span>
-        <div class="mvp-text" id="mvpRedText"></div>
+        <span class="team-label red">Equipe Rouge</span>
+        <div class="team-mvp-text" id="mvpRedText"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:100px 1fr;gap:6px;align-items:center;">
+      <div class="total-score-cell" id="totalScoreCell">
+        <div class="total-text" id="totalScoreText"></div>
+      </div>
+      <div class="enjeu-section">
+        <div class="enjeu-text" id="enjeuText">MVP DE L'EQUIPE GAGNANTE = MAITRE DE MON PSEUDO 7 JOURS</div>
       </div>
     </div>
   </div>
+
 </div>
 
 <script>
   const BIN_ID = 'd9b3e782f440cad27817';
   const DAYS = ['LUN','MAR','MER','JEU','VEN','SAM'];
-  const ORDER = [0,3,1,4,2,5];
   const grid = document.getElementById('calGrid');
   const scoreCells = {}, scoreTexts = {}, mvpCells = {}, mvpTexts = {};
 
-  ORDER.forEach(i => {
+  // Ordre : LUN MAR MER / JEU VEN SAM
+  const ORDER = [0,1,2,3,4,5];
+  ORDER.forEach((i) => {
+    const day = DAYS[i];
     const block = document.createElement('div'); block.className = 'day-block';
-    const lbl = document.createElement('div'); lbl.className = 'day-label'; lbl.textContent = DAYS[i];
+    const lbl = document.createElement('div'); lbl.className = 'day-label'; lbl.textContent = day;
     block.appendChild(lbl);
     const sc = document.createElement('div'); sc.className = 'score-cell';
     const st = document.createElement('div'); st.className = 'cell-text';
@@ -153,28 +243,25 @@
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
   }
-
   function getColor(text) {
     const n = getNum(text);
     if (n === null) return '';
     return n > 0 ? 'green' : 'red';
   }
-
   function topMvp(map) {
     let top = '', cnt = 0;
     Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
-    return top ? top + (cnt > 1 ? ' ×' + cnt : '') : '';
+    return top ? top + (cnt > 1 ? ' x' + cnt : '') : '';
   }
 
   async function load() {
     try {
       const r = await fetch('https://api.npoint.io/' + BIN_ID + '?nocache=' + Date.now() + '_' + Math.random(), {
         cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }
+        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
       });
       if (!r.ok) return;
       const data = await r.json();
-
       let sum = 0;
       const mvpG = {}, mvpR = {};
 
@@ -184,12 +271,10 @@
         const color = getColor(d.text);
         const num = getNum(d.text);
         if (num !== null) sum += num;
-
         scoreCells[i].className = 'score-cell' + (color ? ' ' + color : '');
         scoreTexts[i].textContent = (d.text || '').toString().toUpperCase();
         mvpCells[i].className = 'mvp-cell' + (color ? ' ' + color : '');
         mvpTexts[i].textContent = (m.text || '').toUpperCase();
-
         const pseudo = (m.text || '').trim().toUpperCase();
         if (pseudo) {
           if (color === 'green') mvpG[pseudo] = (mvpG[pseudo] || 0) + 1;
