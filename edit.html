@@ -10,10 +10,13 @@
   h1 { font-family: Arial Black; font-size: 14px; letter-spacing: 2px; color: #fff; margin-bottom: 2px; text-transform: uppercase; }
   .subtitle { font-size: 9px; color: rgba(255,255,255,0.35); margin-bottom: 8px; text-align: center; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; max-width: 700px; }
-  .block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 3px; }
-  .block.green { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
-  .block.red   { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+  .block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
   .day-lbl { font-family: Arial Black; font-size: 11px; letter-spacing: 1px; color: #fff; text-transform: uppercase; text-align: center; margin-bottom: 2px; }
+  .score-sub { border-radius: 6px; padding: 3px; border: 1px solid transparent; transition: all 0.3s; }
+  .score-sub.green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.35); }
+  .score-sub.red   { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35); }
+  .mvp-sub { border-radius: 6px; padding: 3px; border: 1px solid transparent; transition: all 0.3s; }
+  .mvp-sub.gold { background: rgba(234,179,8,0.15); border-color: rgba(234,179,8,0.5); }
   .row { display: flex; align-items: center; gap: 4px; }
   .row-lbl { font-family: Arial Black; font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,0.4); text-transform: uppercase; width: 34px; text-align: right; flex-shrink: 0; }
   .cell-ta {
@@ -28,13 +31,9 @@
   .total-val { height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: Impact, Arial Black; font-size: 18px; color: #fff; letter-spacing: 1px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
   .total-val.green { background: rgba(34,197,94,0.2); border-color: #22c55e; }
   .total-val.red   { background: rgba(239,68,68,0.2); border-color: #ef4444; }
-  .mvp-row-total { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-  .mvp-box { border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 1px; }
-  .mvp-box.green { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); }
-  .mvp-box.red   { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
-  .mvp-team-lbl { font-family: Arial Black; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; }
-  .mvp-team-lbl.green { color: rgba(34,197,94,0.8); }
-  .mvp-team-lbl.red   { color: rgba(239,68,68,0.8); }
+  .mvp-total-box { border-radius: 6px; padding: 6px; display: flex; flex-direction: column; align-items: center; gap: 1px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); transition: all 0.3s; }
+  .mvp-total-box.gold { background: rgba(234,179,8,0.15); border-color: rgba(234,179,8,0.6); }
+  .mvp-total-lbl2 { font-family: Arial Black; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(234,179,8,0.9); }
   .mvp-val { font-family: Impact, Arial Black; font-size: 12px; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
   .saved { margin-top: 5px; font-size: 10px; color: #22c55e; text-align: center; height: 12px; opacity: 0; transition: opacity 0.4s; }
   .saved.show { opacity: 1; }
@@ -50,15 +49,9 @@
   <div class="total-block">
     <div class="total-lbl">TOTAL (auto)</div>
     <div class="total-val" id="totalVal">0</div>
-    <div class="mvp-row-total">
-      <div class="mvp-box green">
-        <span class="mvp-team-lbl green">⬡ Équipe Verte</span>
-        <div class="mvp-val" id="mvpGreenVal">...</div>
-      </div>
-      <div class="mvp-box red">
-        <span class="mvp-team-lbl red">⬡ Équipe Rouge</span>
-        <div class="mvp-val" id="mvpRedVal">...</div>
-      </div>
+    <div class="mvp-total-box" id="mvpTotalBox">
+      <span class="mvp-total-lbl2">⭐ MVP de la semaine</span>
+      <div class="mvp-val" id="mvpTotalVal">...</div>
     </div>
   </div>
 </div>
@@ -77,7 +70,8 @@
   const ORDER = [0,3,1,4,2,5];
   let state = {};
   let saveTimer = null;
-  const blocks = {};
+  const scoreBoxes = {};
+  const mvpBoxes = {};
   const scoreTA = {};
   const mvpTA = {};
 
@@ -103,27 +97,28 @@
 
   function updateTotal() {
     let sum = 0;
-    const mvpG = {}, mvpR = {};
+    const mvpAll = {};
     DAYS.forEach((_, i) => {
       const txt = state['day-' + i]?.text || '';
-      const mvpTxt = (state['mvp-' + i]?.text || '').trim().toUpperCase();
+      const mvpTxtRaw = (state['mvp-' + i]?.text || '').trim();
+      const mvpTxt = mvpTxtRaw.toUpperCase();
       const color = getColor(txt);
       const n = getNum(txt);
       if (n !== null) sum += n;
-      // update block color
-      if (blocks[i]) blocks[i].className = 'block' + (color ? ' ' + color : '');
-      // MVP tally
-      if (mvpTxt) {
-        if (color === 'green') mvpG[mvpTxt] = (mvpG[mvpTxt] || 0) + 1;
-        if (color === 'red')   mvpR[mvpTxt] = (mvpR[mvpTxt] || 0) + 1;
-      }
+      // update score sub-box color (green/red)
+      if (scoreBoxes[i]) scoreBoxes[i].className = 'score-sub' + (color ? ' ' + color : '');
+      // update mvp sub-box color (gold when filled)
+      if (mvpBoxes[i]) mvpBoxes[i].className = 'mvp-sub' + (mvpTxtRaw ? ' gold' : '');
+      // MVP tally (overall, only counted on scored days)
+      if (mvpTxt && color) mvpAll[mvpTxt] = (mvpAll[mvpTxt] || 0) + 1;
     });
     const totalColor = sum > 0 ? 'green' : 'red';
     const tv = document.getElementById('totalVal');
     tv.textContent = sum;
     tv.className = 'total-val ' + totalColor;
-    document.getElementById('mvpGreenVal').textContent = topMvp(mvpG);
-    document.getElementById('mvpRedVal').textContent   = topMvp(mvpR);
+    const top = topMvp(mvpAll);
+    document.getElementById('mvpTotalVal').textContent = top;
+    document.getElementById('mvpTotalBox').className = 'mvp-total-box' + (top !== '...' ? ' gold' : '');
     state['total'] = { text: String(sum), color: totalColor };
   }
 
@@ -153,31 +148,35 @@
       if (!state['day-' + i]) state['day-' + i] = { text: '', color: '' };
       if (!state['mvp-' + i]) state['mvp-' + i] = { text: '' };
 
-      const color = getColor(state['day-' + i].text);
       const block = document.createElement('div');
-      block.className = 'block' + (color ? ' ' + color : '');
-      blocks[i] = block;
+      block.className = 'block';
 
       const lbl = document.createElement('div'); lbl.className = 'day-lbl'; lbl.textContent = DAYS[i];
       block.appendChild(lbl);
 
-      // Score row
+      // Score sub-box (green/red)
+      const color = getColor(state['day-' + i].text);
+      const scoreSub = document.createElement('div'); scoreSub.className = 'score-sub' + (color ? ' ' + color : '');
       const sRow = document.createElement('div'); sRow.className = 'row';
       const sLbl = document.createElement('span'); sLbl.className = 'row-lbl'; sLbl.textContent = 'SCORE';
       const sTa = document.createElement('textarea'); sTa.className = 'cell-ta';
       sTa.placeholder = '0'; sTa.value = state['day-' + i].text || '';
       sTa.addEventListener('input', () => { state['day-' + i].text = sTa.value; scheduleSave(); });
-      sRow.appendChild(sLbl); sRow.appendChild(sTa); block.appendChild(sRow);
-      scoreTA[i] = sTa;
+      sRow.appendChild(sLbl); sRow.appendChild(sTa); scoreSub.appendChild(sRow);
+      block.appendChild(scoreSub);
+      scoreTA[i] = sTa; scoreBoxes[i] = scoreSub;
 
-      // MVP row
+      // MVP sub-box (gold when filled)
+      const mvpFilled = (state['mvp-' + i].text || '').trim() !== '';
+      const mvpSub = document.createElement('div'); mvpSub.className = 'mvp-sub' + (mvpFilled ? ' gold' : '');
       const mRow = document.createElement('div'); mRow.className = 'row';
       const mLbl = document.createElement('span'); mLbl.className = 'row-lbl'; mLbl.textContent = 'MVP';
       const mTa = document.createElement('textarea'); mTa.className = 'cell-ta';
       mTa.placeholder = '...'; mTa.value = state['mvp-' + i].text || '';
       mTa.addEventListener('input', () => { state['mvp-' + i].text = mTa.value; scheduleSave(); });
-      mRow.appendChild(mLbl); mRow.appendChild(mTa); block.appendChild(mRow);
-      mvpTA[i] = mTa;
+      mRow.appendChild(mLbl); mRow.appendChild(mTa); mvpSub.appendChild(mRow);
+      block.appendChild(mvpSub);
+      mvpTA[i] = mTa; mvpBoxes[i] = mvpSub;
 
       grid.appendChild(block);
     });

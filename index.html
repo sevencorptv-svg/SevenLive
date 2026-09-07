@@ -59,8 +59,19 @@
 
   .score-number { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; color: #fff; letter-spacing: 2px; line-height: 1; text-shadow: 0 2px 8px rgba(0,0,0,1); overflow: hidden; max-width: 100%; text-align: center; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; word-break: break-all; }
 
+  .mvp-cell {
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    padding: 5px 8px; gap: 4px;
+    transition: all 0.4s;
+  }
+  .mvp-cell.gold { background: rgba(234,179,8,0.22); border-color: rgba(234,179,8,0.8); box-shadow: 0 0 12px rgba(234,179,8,0.3); }
+
   .mvp-row { display: flex; align-items: center; gap: 3px; width: 100%; justify-content: center; }
   .mvp-badge { font-family: 'Rajdhani', Arial, sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.3); text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); border-radius: 2px; padding: 0 3px; flex-shrink: 0; }
+  .mvp-cell.gold .mvp-badge { color: rgba(234,179,8,0.9); border-color: rgba(234,179,8,0.5); }
   .mvp-name { font-family: 'Rajdhani', Arial, sans-serif; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; word-break: break-word; text-align: center; }
 
   /* SEP */
@@ -69,7 +80,7 @@
   .sep .d { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); }
 
   /* BOTTOM */
-  .bottom-row { display: grid; grid-template-columns: 80px 1fr 1fr; gap: 6px; align-items: stretch; }
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: stretch; }
 
   .total-cell { border-radius: 8px; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 8px; gap: 0; transition: all 0.4s; }
   .total-cell.green { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.7); box-shadow: 0 0 16px rgba(34,197,94,0.25); }
@@ -77,13 +88,10 @@
   .total-lbl { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 8px; letter-spacing: 3px; color: rgba(255,255,255,0.3); }
   .total-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; color: #fff; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); line-height: 1; }
 
-  .team-cell { border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.4s; }
-  .team-cell.green { background: rgba(34,197,94,0.1); border: 1.5px solid rgba(34,197,94,0.35); }
-  .team-cell.red   { background: rgba(239,68,68,0.1);  border: 1.5px solid rgba(239,68,68,0.35); }
-  .team-lbl { font-family: 'Rajdhani', Arial, sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-  .team-lbl.green { color: rgba(34,197,94,0.8); }
-  .team-lbl.red   { color: rgba(239,68,68,0.8); }
-  .team-name { font-family: 'Rajdhani', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; overflow: hidden; max-width: 100%; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; word-break: break-word; }
+  .mvp-total-cell { border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.4s; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); }
+  .mvp-total-cell.gold { background: rgba(234,179,8,0.18); border: 1.5px solid rgba(234,179,8,0.7); box-shadow: 0 0 16px rgba(234,179,8,0.3); }
+  .mvp-total-lbl { font-family: 'Rajdhani', Arial, sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(234,179,8,0.85); }
+  .mvp-total-name { font-family: 'Rajdhani', Arial, sans-serif; font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; overflow: hidden; max-width: 100%; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; word-break: break-word; }
 
   /* ENJEU */
   .enjeu-cell { border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 6px 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
@@ -109,13 +117,9 @@
       <div class="total-lbl">TOTAL</div>
       <div class="total-num" id="totalNum"></div>
     </div>
-    <div class="team-cell green">
-      <span class="team-lbl green">Equipe Verte</span>
-      <div class="team-name" id="mvpGreen"></div>
-    </div>
-    <div class="team-cell red">
-      <span class="team-lbl red">Equipe Rouge</span>
-      <div class="team-name" id="mvpRed"></div>
+    <div class="mvp-total-cell" id="mvpTotalCell">
+      <span class="mvp-total-lbl">⭐ MVP de la semaine</span>
+      <div class="mvp-total-name" id="mvpTotalName"></div>
     </div>
   </div>
 
@@ -131,22 +135,27 @@
   // Ordre : LUN|JEU / MAR|VEN / MER|SAM
   const ORDER = [0,3,1,4,2,5];
   const grid = document.getElementById('calGrid');
-  const sCells = {}, sNums = {}, mNames = {};
+  const sCells = {}, sNums = {}, mCells = {}, mNames = {};
 
   ORDER.forEach(i => {
     const day = DAYS[i];
     const block = document.createElement('div'); block.className = 'day-block';
     const lbl = document.createElement('div'); lbl.className = 'day-label'; lbl.textContent = day;
+
     const sc = document.createElement('div'); sc.className = 'score-cell';
     const sn = document.createElement('div'); sn.className = 'score-number';
+    sc.appendChild(sn);
+
+    const mc = document.createElement('div'); mc.className = 'mvp-cell';
     const mr = document.createElement('div'); mr.className = 'mvp-row';
     const mb = document.createElement('span'); mb.className = 'mvp-badge'; mb.textContent = 'MVP';
     const mn = document.createElement('div'); mn.className = 'mvp-name';
     mr.appendChild(mb); mr.appendChild(mn);
-    sc.appendChild(sn); sc.appendChild(mr);
-    block.appendChild(lbl); block.appendChild(sc);
+    mc.appendChild(mr);
+
+    block.appendChild(lbl); block.appendChild(sc); block.appendChild(mc);
     grid.appendChild(block);
-    sCells[i] = sc; sNums[i] = sn; mNames[i] = mn;
+    sCells[i] = sc; sNums[i] = sn; mCells[i] = mc; mNames[i] = mn;
   });
 
   function getNum(str) {
@@ -170,7 +179,7 @@
       if (!r.ok) return;
       const data = await r.json();
       let sum = 0;
-      const mvpG = {}, mvpR = {};
+      const mvpAll = {};
       DAYS.forEach((_, i) => {
         const d = data['day-' + i] || {};
         const m = data['mvp-' + i] || {};
@@ -179,18 +188,17 @@
         if (num !== null) sum += num;
         sCells[i].className = 'score-cell' + (color ? ' ' + color : '');
         sNums[i].textContent = d.text || '';
-        mNames[i].textContent = (m.text || '').toUpperCase();
-        const p = (m.text || '').trim().toUpperCase();
-        if (p) {
-          if (color === 'green') mvpG[p] = (mvpG[p] || 0) + 1;
-          if (color === 'red')   mvpR[p] = (mvpR[p] || 0) + 1;
-        }
+        const p = (m.text || '').trim();
+        mNames[i].textContent = p.toUpperCase();
+        mCells[i].className = 'mvp-cell' + (p ? ' gold' : '');
+        if (p) mvpAll[p.toUpperCase()] = (mvpAll[p.toUpperCase()] || 0) + 1;
       });
       const c = sum > 0 ? 'green' : 'red';
       document.getElementById('totalCell').className = 'total-cell ' + c;
       document.getElementById('totalNum').textContent = sum;
-      document.getElementById('mvpGreen').textContent = topOf(mvpG);
-      document.getElementById('mvpRed').textContent   = topOf(mvpR);
+      const topMvp = topOf(mvpAll);
+      document.getElementById('mvpTotalName').textContent = topMvp === '—' ? '' : topMvp;
+      document.getElementById('mvpTotalCell').className = 'mvp-total-cell' + (topMvp !== '—' ? ' gold' : '');
       const enjeu = data['enjeu'] || {};
       if (enjeu.text) document.getElementById('enjeuTxt').textContent = enjeu.text.toUpperCase();
     } catch(e) {}
