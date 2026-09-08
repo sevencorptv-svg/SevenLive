@@ -159,7 +159,8 @@
   });
 
   function getNum(str) {
-    const s = String(str || '').replace(',', '.').replace(/\s/g, '').trim();
+    // Enleve tous les espaces (normaux, fins, insecables) et virgules
+    const s = String(str || '').replace(/[\s\u00a0\u202f\u2009]/g, '').replace(',', '.').trim();
     if (!s) return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
