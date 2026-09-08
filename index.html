@@ -159,7 +159,7 @@
   });
 
   function getNum(str) {
-    const s = String(str || '').replace(',', '.').trim();
+    const s = String(str || '').replace(',', '.').replace(/\s/g, '').trim();
     if (!s) return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
