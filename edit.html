@@ -114,7 +114,7 @@
     });
     const totalColor = sum > 0 ? 'green' : 'red';
     const tv = document.getElementById('totalVal');
-    tv.textContent = formatNum(sum);
+    tv.textContent = sum;
     tv.className = 'total-val ' + totalColor;
     const top = topMvp(mvpAll);
     document.getElementById('mvpTotalVal').textContent = top;
