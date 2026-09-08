@@ -164,6 +164,10 @@
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
   }
+  function formatNum(n) {
+    if (n === null) return '';
+    return n.toLocaleString('fr-FR').replace(/ /g, ' ');
+  }
   function getColor(txt) { const n = getNum(txt); if (n === null) return ''; return n > 0 ? 'green' : 'red'; }
   function topOf(map) {
     let top = '', cnt = 0;
@@ -195,7 +199,7 @@
       });
       const c = sum > 0 ? 'green' : 'red';
       document.getElementById('totalCell').className = 'total-cell ' + c;
-      document.getElementById('totalNum').textContent = sum;
+      document.getElementById('totalNum').textContent = formatNum(sum);
       const topMvp = topOf(mvpAll);
       document.getElementById('mvpTotalName').textContent = topMvp === '—' ? '' : topMvp;
       document.getElementById('mvpTotalCell').className = 'mvp-total-cell' + (topMvp !== '—' ? ' gold' : '');
