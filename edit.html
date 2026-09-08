@@ -77,10 +77,17 @@
 
   function getNum(str) {
     if (!str && str !== 0) return null;
-    const s = String(str).replace(',', '.').trim();
+    const s = String(str).replace(',', '.').replace(/\s/g, '').trim();
     if (s === '') return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
+  }
+
+  function formatNum(n) {
+    const neg = n < 0;
+    const parts = String(Math.abs(n)).split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return (neg ? '-' : '') + parts.join(',');
   }
 
   function getColor(text) {
@@ -114,7 +121,7 @@
     });
     const totalColor = sum > 0 ? 'green' : 'red';
     const tv = document.getElementById('totalVal');
-    tv.textContent = sum;
+    tv.textContent = formatNum(sum);
     tv.className = 'total-val ' + totalColor;
     const top = topMvp(mvpAll);
     document.getElementById('mvpTotalVal').textContent = top;
