@@ -77,17 +77,10 @@
 
   function getNum(str) {
     if (!str && str !== 0) return null;
-    const s = String(str).replace(',', '.').replace(/\s/g, '').trim();
+    const s = String(str).replace(',', '.').trim();
     if (s === '') return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
-  }
-
-  function formatNum(n) {
-    const neg = n < 0;
-    const parts = String(Math.abs(n)).split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return (neg ? '-' : '') + parts.join(',');
   }
 
   function getColor(text) {
@@ -96,34 +89,51 @@
     return n > 0 ? 'green' : 'red';
   }
 
-  function topMvp(map) {
-    let top = '', cnt = 0;
-    Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
-    return top ? top + (cnt > 1 ? ' ×' + cnt : '') : '...';
+  function topMvp(map, pieces) {
+    // Si un pseudo apparait 2+ fois -> il gagne
+    let maxCnt = 0;
+    Object.values(map).forEach(c => { if (c > maxCnt) maxCnt = c; });
+
+    if (maxCnt >= 2) {
+      // Prendre celui avec le plus d'apparitions
+      let top = '', cnt = 0;
+      Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
+      return top + ' x' + cnt;
+    } else {
+      // Tous différents -> départager par pièces
+      let top = '', maxP = -1;
+      Object.keys(map).forEach(p => {
+        const pts = getNum(pieces[p] || '0') || 0;
+        if (pts > maxP) { maxP = pts; top = p; }
+      });
+      return top || '...';
+    }
   }
 
   function updateTotal() {
     let sum = 0;
     const mvpAll = {};
+    const piecesMap = {}; // pseudo -> total pièces
     DAYS.forEach((_, i) => {
       const txt = state['day-' + i]?.text || '';
       const mvpTxtRaw = (state['mvp-' + i]?.text || '').trim();
       const mvpTxt = mvpTxtRaw.toUpperCase();
+      const pieceTxt = state['pieces-' + i]?.text || '';
       const color = getColor(txt);
       const n = getNum(txt);
       if (n !== null) sum += n;
-      // update score sub-box color (green/red)
       if (scoreBoxes[i]) scoreBoxes[i].className = 'score-sub' + (color ? ' ' + color : '');
-      // update mvp sub-box color (gold when filled)
       if (mvpBoxes[i]) mvpBoxes[i].className = 'mvp-sub' + (mvpTxtRaw ? ' gold' : '');
-      // MVP tally (overall, only counted on scored days)
-      if (mvpTxt && color) mvpAll[mvpTxt] = (mvpAll[mvpTxt] || 0) + 1;
+      if (mvpTxt && color) {
+        mvpAll[mvpTxt] = (mvpAll[mvpTxt] || 0) + 1;
+        piecesMap[mvpTxt] = (piecesMap[mvpTxt] || 0) + (getNum(pieceTxt) || 0);
+      }
     });
     const totalColor = sum > 0 ? 'green' : 'red';
     const tv = document.getElementById('totalVal');
     tv.textContent = formatNum(sum);
     tv.className = 'total-val ' + totalColor;
-    const top = topMvp(mvpAll);
+    const top = topMvp(mvpAll, piecesMap);
     document.getElementById('mvpTotalVal').textContent = top;
     document.getElementById('mvpTotalBox').className = 'mvp-total-box' + (top !== '...' ? ' gold' : '');
     state['total'] = { text: String(sum), color: totalColor };
@@ -182,6 +192,17 @@
       mTa.placeholder = '...'; mTa.value = state['mvp-' + i].text || '';
       mTa.addEventListener('input', () => { state['mvp-' + i].text = mTa.value; scheduleSave(); });
       mRow.appendChild(mLbl); mRow.appendChild(mTa); mvpSub.appendChild(mRow);
+
+      // Pièces row
+      if (!state['pieces-' + i]) state['pieces-' + i] = { text: '' };
+      const pRow = document.createElement('div'); pRow.className = 'row';
+      const pLbl = document.createElement('span'); pLbl.className = 'row-lbl'; pLbl.textContent = 'PIECES';
+      const pTa = document.createElement('textarea'); pTa.className = 'cell-ta';
+      pTa.placeholder = '0'; pTa.value = state['pieces-' + i].text || '';
+      pTa.style.color = 'rgba(234,179,8,0.9)';
+      pTa.addEventListener('input', () => { state['pieces-' + i].text = pTa.value; scheduleSave(); });
+      pRow.appendChild(pLbl); pRow.appendChild(pTa); mvpSub.appendChild(pRow);
+
       block.appendChild(mvpSub);
       mvpTA[i] = mTa; mvpBoxes[i] = mvpSub;
 
