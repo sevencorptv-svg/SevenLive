@@ -159,32 +159,16 @@
   });
 
   function getNum(str) {
-    // Enleve tous les espaces (normaux, fins, insecables) et virgules
-    const s = String(str || '').replace(/[\s\u00a0\u202f\u2009]/g, '').replace(',', '.').trim();
+    const s = String(str || '').replace(',', '.').replace(/\s/g, '').trim();
     if (!s) return null;
     const m = s.match(/-?\d+(\.\d+)?/);
     return m ? parseFloat(m[0]) : null;
   }
-  function formatNum(n) {
-    if (n === null) return '';
-    return n.toLocaleString('fr-FR').replace(/ /g, ' ');
-  }
   function getColor(txt) { const n = getNum(txt); if (n === null) return ''; return n > 0 ? 'green' : 'red'; }
-  function topOf(map, pieces) {
-    let maxCnt = 0;
-    Object.values(map).forEach(c => { if (c > maxCnt) maxCnt = c; });
-    if (maxCnt >= 2) {
-      let top = '', cnt = 0;
-      Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
-      return top + ' x' + cnt;
-    } else {
-      let top = '', maxP = -1;
-      Object.keys(map).forEach(p => {
-        const pts = getNum((pieces || {})[p] || '0') || 0;
-        if (pts > maxP) { maxP = pts; top = p; }
-      });
-      return top || '—';
-    }
+  function topOf(map) {
+    let top = '', cnt = 0;
+    Object.entries(map).forEach(([p,c]) => { if (c > cnt) { cnt = c; top = p; } });
+    return top ? top + (cnt > 1 ? ' x' + cnt : '') : '—';
   }
 
   async function load() {
@@ -195,28 +179,24 @@
       if (!r.ok) return;
       const data = await r.json();
       let sum = 0;
-      const mvpAll = {}, piecesMap = {};
+      const mvpAll = {};
       DAYS.forEach((_, i) => {
         const d = data['day-' + i] || {};
         const m = data['mvp-' + i] || {};
-        const pc = data['pieces-' + i] || {};
         const color = getColor(d.text);
         const num = getNum(d.text);
         if (num !== null) sum += num;
         sCells[i].className = 'score-cell' + (color ? ' ' + color : '');
         sNums[i].textContent = d.text || '';
-        const p = (m.text || '').trim().toUpperCase();
-        mNames[i].textContent = p;
+        const p = (m.text || '').trim();
+        mNames[i].textContent = p.toUpperCase();
         mCells[i].className = 'mvp-cell' + (p ? ' gold' : '');
-        if (p && color) {
-          mvpAll[p] = (mvpAll[p] || 0) + 1;
-          piecesMap[p] = (piecesMap[p] || 0) + (getNum(pc.text) || 0);
-        }
+        if (p) mvpAll[p.toUpperCase()] = (mvpAll[p.toUpperCase()] || 0) + 1;
       });
       const c = sum > 0 ? 'green' : 'red';
       document.getElementById('totalCell').className = 'total-cell ' + c;
-      document.getElementById('totalNum').textContent = formatNum(sum);
-      const topMvp = topOf(mvpAll, piecesMap);
+      document.getElementById('totalNum').textContent = sum;
+      const topMvp = topOf(mvpAll);
       document.getElementById('mvpTotalName').textContent = topMvp === '—' ? '' : topMvp;
       document.getElementById('mvpTotalCell').className = 'mvp-total-cell' + (topMvp !== '—' ? ' gold' : '');
       const enjeu = data['enjeu'] || {};
